@@ -1,0 +1,173 @@
+<?php
+
+/**
+ * Implements hook_schema_alter().
+ */
+function custom_events_schema_alter(&$schema) {
+  $schema['twitter_user']['fields']['sid'] =  array( 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,);
+
+  $schema['twitter_user']['fields']['screen_name'] =  array( 'not null' => false,
+    'type' => 'text',
+    'default' => NULL,
+    'description' => 'user id');
+  $schema['twitter_user']['fields']['uid'] =  array( 'not null' => true,
+    'type' => 'text',
+    'description' => 'user id');
+
+  $schema['twitter_user']['fields']['screen_name'] =  array( 'not null' => false,
+    'type' => 'text',
+    'default' => NULL,
+    'description' => 'user id');  
+
+  $schema['twitter_user']['primary key'] = array('sid');
+
+  $schema['twitter_message']['fields']['sid'] =  array( 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,);
+  $schema['twitter_message']['fields']['timestamp'] =  array( 'not null' => true,
+    'type' => 'text',
+    'size' => 'medium',
+    'description' => 'user id');
+
+  $schema['twitter_message']['fields']['uid'] =  array( 'not null' => true,
+    'type' => 'text',
+    'size' => 'medium',
+    'description' => 'user id');
+
+   $schema['twitter_message']['fields']['message'] =  array( 'not null' => true,
+    'type' => 'text',
+    'size' => 'big',
+    'description' => 'user id');   
+
+  $schema['twitter_message']['primary key'] = array('sid');
+
+  $schema['twitter_links']['fields']['sid'] =  array( 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,);
+  $schema['twitter_links']['fields']['message_id'] =  array( 'not null' => true,
+    'type' => 'text',
+    'size' => 'medium',
+    'description' => 'user id');
+
+  $schema['twitter_links']['fields']['link'] =  array( 'not null' => true,
+    'type' => 'text',
+    'size' => 'medium',
+    'description' => 'user id');
+
+  $schema['twitter_links']['fields']['domain'] =  array( 'not null' => true,
+    'type' => 'text',
+    'size' => 'medium',
+    'description' => 'user id');  
+
+    
+
+  $schema['twitter_links']['primary key'] = array('sid');
+  
+ 
+}
+
+function custom_events_update_7001() {
+  $schema['twitter_user']['fields']['sid'] =  array( 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,);
+  $schema['twitter_user']['fields']['uid'] =  array( 'not null' => true,
+    'type' => 'text',
+    'size' => 'medium',
+    'description' => 'user id');
+
+  $schema['twitter_user']['fields']['screen_name'] =  array( 'not null' => false,
+    'type' => 'text',
+    'size' => 'medium',
+    'default' => NULL,
+    'description' => 'user id');  
+
+  $schema['twitter_user']['primary key'] = array('sid');
+
+  db_create_table('twitter_user',$schema['twitter_user']);
+}
+
+
+function custom_events_update_7002() {
+  $schema['twitter_message']['fields']['sid'] =  array( 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,);
+  $schema['twitter_message']['fields']['timestamp'] =  array( 'not null' => true,
+    'type' => text,
+    'size' => 'medium',
+    'description' => 'user id');
+
+  $schema['twitter_message']['fields']['uid'] =  array( 'not null' => true,
+    'type' => text,
+    'size' => 'medium',
+    'description' => 'user id');
+
+   $schema['twitter_message']['fields']['message'] =  array( 'not null' => true,
+    'type' => text,
+    'size' => 'big',
+    'description' => 'user id');   
+
+
+  $schema['twitter_message']['fields']['message_id'] =  array( 'not null' => true,
+    'type' => text,
+    'size' => 'medium',
+    'description' => 'user id');
+
+
+  $schema['twitter_message']['primary key'] = array('sid');
+
+  db_create_table('twitter_message',$schema['twitter_message']);
+}
+
+function custom_events_update_7003() {
+  $schema['twitter_links']['fields']['sid'] =  array( 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,);
+  $schema['twitter_links']['fields']['message_id'] =  array( 'not null' => true,
+    'type' => text,
+    'size' => 'medium',
+    'description' => 'user id');
+
+  $schema['twitter_links']['fields']['link'] =  array( 'not null' => true,
+    'type' => text,
+    'size' => 'medium',
+    'description' => 'user id');
+
+    
+
+  $schema['twitter_links']['primary key'] = array('sid');
+
+  db_create_table('twitter_links',$schema['twitter_links']);
+}
+
+
+/*
+ * Implements hook_update
+ * This will add weight field to entrayn_glu table, so that reordering of glu is possible
+ *
+ */
+function custom_events_update_7004(){
+  if(!(db_field_exists('twitter_links', 'domain'))) {
+    db_add_field('twitter_links', 'domain',  array( 'not null' => false,
+                                                 'type' => text,
+                                                 'default' => NULL,
+                                                 ));
+  }
+}
+
+
+function custom_events_update_7005(){
+  if(!(db_field_exists('twitter_message', 'message_id'))) {
+    db_add_field('twitter_message', 'message_id',  array( 'not null' => false,
+                                                 'type' => text,
+                                                 'default' => NULL,
+                                                 ));
+  }
+}

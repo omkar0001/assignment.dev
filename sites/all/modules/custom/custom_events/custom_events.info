@@ -1,0 +1,5 @@
+name = custom events 
+description = This module provides interface to handle events.
+core = 7.x
+files[] = twitteroauth/twitteroauth/twitteroauth.php
+files[] = twitteroauth/config.php
