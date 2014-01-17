@@ -12,7 +12,7 @@ var compute_tweet = function() {
          
          jQuery("#highest_user").replaceWith("<div id='highest_user'>User who has highest tweets: " + data['user'] + " </div>");
 
-         var content = '<div id="highest_domain"> Highest frequency domain: '; 
+         var content = '<div id="highest_domain"> Highest frequency domains: </br>'; 
          for(var i =0; i<data['domain'].length;i++) {
            content = content + '' + data['domain'][i] + '</br>';
          }   

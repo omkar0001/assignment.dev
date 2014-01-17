@@ -393,7 +393,7 @@ function custom_events_theme_registry_alter(&$theme) {
   $content .= '<div id="highest_user">User who has highest tweets: ' . $stats['user'] . '</div></br>';
 
 
-  $content .= '<div id="highest_domain"> Highest frequency domain: ';
+  $content .= '<div id="highest_domain"> Highest frequency domains: </br>';
   foreach($stats['domain'] as $each_domain) {
     $content .= $each_domain . '</br>';
   }   
