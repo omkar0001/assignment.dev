@@ -128,6 +128,9 @@ function custom_events_menu() {
       //$total_no_tweets++;
     }
 
+    if(count($twitter_friends_ids) == 0) {
+      return array('no' => '', 'domain' => '', 'user' => '');
+    }
     //dd($twitter_friends_ids);
     //Getting twitter messages
     $twitter_messages = db_select('twitter_message', 't_m')
