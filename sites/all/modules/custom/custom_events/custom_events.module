@@ -7,7 +7,7 @@ require_once(drupal_get_path("module", "custom_events") . '/twitteroauth/config.
  * Implements hook_menu().
  */
 function custom_events_menu() {
-  echo "hellox";
+  
   $items['frontpage'] = array(
     'title' => 'Twitter stats',
     'description' => '',
@@ -129,7 +129,7 @@ function custom_events_menu() {
     }
 
     if(count($twitter_friends_ids) == 0) {
-      return array('no' => '', 'domain' => '', 'user' => '');
+      return array('no' => '', 'domain' => array(), 'user' => '');
     }
     //dd($twitter_friends_ids);
     //Getting twitter messages
@@ -153,7 +153,7 @@ function custom_events_menu() {
     
     //If no messages
     if(count($twitter_messages_ids)==0) {
-      return array('no' => '', 'domain' => '', 'user' => '');
+      return array('no' => '', 'domain' => array(), 'user' => '');
     }
     $max_tweet_users = array_keys($tweets_user, max($tweets_user));
     $max_tweet_user = $max_tweet_users[0];
@@ -185,9 +185,9 @@ function custom_events_menu() {
     }
 
     $max_tweet_links = array_keys($tweets_links, max($tweets_links));
-    $max_tweet_link = $max_tweet_links[0];
+    //$max_tweet_link = $max_tweet_links[0];
 
-    return array('no' => $total_no_tweets, 'domain' => $max_tweet_link, 'user' => $screen_name);
+    return array('no' => $total_no_tweets, 'domain' => $max_tweet_links, 'user' => $screen_name);
 
  } 
 
@@ -384,11 +384,21 @@ function custom_events_theme_registry_alter(&$theme) {
 
   
   $content = '
-  <a href="/twitterlogout">Logout</a>
+  <a href="/twitterlogout">Logout</a>';
   
-<div id="total_tweets">Totaltweets  ' . $stats['no'] . '</div></br>
-<div id="highest_domain"> Highest frequency domain: ' . $stats['domain']  . '</div></br>
- <div id="highest_user">User who has highest tweets: ' . $stats['user'] . '</div></br>';
+  $content = '<div id="total_tweets">Totaltweets  ' . $stats['no'] . '</div></br>';
+
+  
+
+  $content .= '<div id="highest_user">User who has highest tweets: ' . $stats['user'] . '</div></br>';
+
+
+  $content .= '<div id="highest_domain"> Highest frequency domain: ';
+  foreach($stats['domain'] as $each_domain) {
+    $content .= $each_domain . '</br>';
+  }   
+
+  $content .= '</div></br>';
    
   //$content = theme('front_page', array('computation_stats' => $stats)); 
 

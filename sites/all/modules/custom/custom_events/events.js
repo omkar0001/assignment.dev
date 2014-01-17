@@ -9,8 +9,16 @@ var compute_tweet = function() {
        type:'POST',
        success:function(data) {
          jQuery("#total_tweets").replaceWith("<div id='total_tweets'>Total tweets: " + data['no'] + " </div>");
-         jQuery("#highest_domain").replaceWith("<div id='highest_domain'>Highest frequency domain: " + data['domain'] + " </div>");
+         
          jQuery("#highest_user").replaceWith("<div id='highest_user'>User who has highest tweets: " + data['user'] + " </div>");
+
+         var content = '<div id="highest_domain"> Highest frequency domain: '; 
+         for(var i =0; i<data['domain'].length;i++) {
+           content = content + '' + data['domain'][i] + '</br>';
+         }   
+
+         content = content + '</div>';
+         jQuery("#highest_domain").replaceWith(content);
          
        },
        complete:function() {
