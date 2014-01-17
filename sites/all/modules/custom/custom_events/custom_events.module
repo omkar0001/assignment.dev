@@ -7,6 +7,7 @@ require_once(drupal_get_path("module", "custom_events") . '/twitteroauth/config.
  * Implements hook_menu().
  */
 function custom_events_menu() {
+  echo "hellox";
   $items['frontpage'] = array(
     'title' => 'Twitter stats',
     'description' => '',
@@ -81,6 +82,14 @@ function custom_events_menu() {
     'access callback' => true
   ); 
 
+  $items['requestCredentials'] = array(
+    'title' => 'Twitter stats',
+    'description' => '',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'request_credentials',
+    'access callback' => true
+  ); 
+  
   return $items;	
 }
   /**
@@ -104,11 +113,30 @@ function custom_events_menu() {
    */
 
  function compute_tweets() {
+    
+    
+    //Getting the friends ids
+    
+    $twitter_friends = db_select('twitter_friends', 't_f')
+    -> fields('t_f', array('friend_id2'))
+    ->condition('friend_id1', $_SESSION['current_twitter_id'])
+    -> execute();
+    $twitter_friends_ids = array();
+    
+    foreach($twitter_friends as $each_friend) {
+      $twitter_friends_ids[] = $each_friend->friend_id2;
+      //$total_no_tweets++;
+    }
+
+    //dd($twitter_friends_ids);
+    //Getting twitter messages
     $twitter_messages = db_select('twitter_message', 't_m')
     -> fields('t_m', array('message_id', 'uid'))
+    -> condition('uid', $twitter_friends_ids, 'IN')
     -> execute();
     $tweets_user = array();
     $no_tweets = 0;
+    $twitter_messages_ids = array();
     foreach($twitter_messages as $each_tweet_message) {
       if(isset($tweets_user[$each_tweet_message -> uid])) {
         $tweets_user[$each_tweet_message -> uid] = $tweets[$each_tweet_message -> uid] + 1;
@@ -116,14 +144,20 @@ function custom_events_menu() {
       else {
         $tweets_user[$each_tweet_message -> uid] = 0;
       }
+      $twitter_messages_ids[] = $each_tweet_message->message_id;
       $total_no_tweets++;
     }
-
+    
+    //If no messages
+    if(count($twitter_messages_ids)==0) {
+      return array('no' => '', 'domain' => '', 'user' => '');
+    }
     $max_tweet_users = array_keys($tweets_user, max($tweets_user));
     $max_tweet_user = $max_tweet_users[0];
     
     $twitter_links = db_select('twitter_links', 't_l')
     -> fields('t_l', array('domain'))
+    -> condition('message_id', $twitter_messages_ids)
     -> execute();
 
 
@@ -180,8 +214,7 @@ function custom_events_menu() {
  */
  function get_tweets($user_id = NULL) {
    $access_token = $_SESSION['access_token'];
-   dd('user id');
-   dd($user_id);
+   
    /* Create a TwitterOauth object with consumer/user tokens. */
    $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $access_token['oauth_token'], $access_token['oauth_token_secret']);
    $content = array();
@@ -195,7 +228,7 @@ function custom_events_menu() {
    $diff = strtotime("+5 day") - strtotime("now");
    $from_time = strtotime("now") - $diff;
    foreach($content as $each_tweet) {
-    if(count($each_tweet-> entities->urls) > 0) {
+    if(count($each_tweet-> entities->urls) > 0 && strtotime($each_tweet->created_at) >= $from_time) {
      $temp_tweet['uid'] = $each_tweet->user->id_str;
      $temp_tweet['message'] = $each_tweet->text;
      $temp_tweet['links'] = $each_tweet-> entities->urls;
@@ -209,7 +242,7 @@ function custom_events_menu() {
  }
  
   function request_store_user() {
-    store_user($_REQUEST['uid'], $_REQUEST['screen_name']);
+    store_user($_REQUEST['uid'], $_REQUEST['screen_name'], $_REQUEST['current_user']);
   }
 
   function request_store_tweet() {
@@ -256,7 +289,7 @@ function custom_events_menu() {
  /**
   *  Store the user.
   */
- function store_user($uid, $screen_name) {
+ function store_user($uid, $screen_name, $current_user) {
    $twitter_users = db_select('twitter_user', 't_u')
     -> fields('t_u', array('uid'))
     -> condition('uid', $uid)
@@ -269,18 +302,62 @@ function custom_events_menu() {
        'screen_name' => $screen_name
        ))
       ->execute();
+   } else {
+     
+
+
+     db_update('twitter_user') // Table name no longer needs {}
+      ->fields(array(
+       'screen_name' => $screen_name,
+       'uid' => $uid
+       ))
+      ->condition('uid', $uid)
+      ->execute(); 
+   }
+
+   $twitter_friends = db_select('twitter_friends', 't_f')
+    -> fields('t_f', array('friend_id1'))
+    -> condition('friend_id1', $uid)
+    ->condition('friend_id2',$current_user)
+    -> execute()
+    -> rowCount();
+
+   if($twitter_friends == 0) {
+     db_insert('twitter_friends') // Table name no longer needs {}
+      ->fields(array(
+       'friend_id1' => $current_user,
+       'friend_id2' => $uid
+       ))
+      ->execute();
    } 
  }
 
 /**
  * Implements hook_theme()
  */
-function custom_events_theme() {
- return array(
-      'front_page' => array(
-        'variables' => array('computation_stats' => array()),
-        ));
+function custom_events_theme_registry_alter(&$theme) {
+  echo "hello";
+ 
+  $theme['front_page'] = array(
+        'variables' => array('computation_stats' => array(),
+        ),
+        'template' => 'front_page'
+
+  );
 } 
+
+
+ function request_credentials() {
+   $access_token = $_SESSION['access_token'];
+   $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $access_token['oauth_token'], $access_token['oauth_token_secret']);
+   
+   
+   $verify_credentials = $connection->get('account/verify_credentials');
+   
+   $_SESSION['current_twitter_id'] = $verify_credentials->id_str;
+   
+   echo json_encode($verify_credentials);
+ }
 
  /**
   * Front page access callback
@@ -299,9 +376,18 @@ function custom_events_theme() {
   $stats = compute_tweets();
 
   $access_token = $_SESSION['access_token'];
+  
+  
 
+  
+  $content = '
+  <a href="/twitterlogout">Logout</a>
+  
+<div id="total_tweets">Totaltweets  ' . $stats['no'] . '</div></br>
+<div id="highest_domain"> Highest frequency domain: ' . $stats['domain']  . '</div></br>
+ <div id="highest_user">User who has highest tweets: ' . $stats['user'] . '</div></br>';
    
-  $content = theme('front_page', array('computation_stats' => $stats)); 
+  //$content = theme('front_page', array('computation_stats' => $stats)); 
 
   //$content .= $connection->get('friends/ids');
 
@@ -310,21 +396,7 @@ function custom_events_theme() {
 }
 
 
-function twitter_stats() {
-  //drupal_add_js(drupal_get_path('module','custom_events') . '/events.js');
-  dpm(compute_tweets());
-  /* Get user access tokens out of the session. */
-  $access_token = $_SESSION['access_token'];
 
-  /* Create a TwitterOauth object with consumer/user tokens. */
-  $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $access_token['oauth_token'], $access_token['oauth_token_secret']);
-
-  $content = $connection->get('statuses/user_timeline', array('user_id' => 71163776));
-  dpm($content);
-  $content = $connection->get('friends/ids');
-  
-  return "hello";
-}
 
 
 /**
@@ -332,6 +404,7 @@ function twitter_stats() {
  */
 function twitter_logout() {
   unset($_SESSION['access_token']);
+  unset($_SESSION['current_twitter_id']);
   header('Location: /frontpage');
 }
 

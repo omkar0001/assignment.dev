@@ -62,11 +62,31 @@ function custom_events_schema_alter(&$schema) {
   $schema['twitter_links']['fields']['domain'] =  array( 'not null' => true,
     'type' => 'text',
     'size' => 'medium',
-    'description' => 'user id');  
+    'description' => 'user id');
+
+  $schema['twitter_links']['primary key'] = array('sid');
+  
+
+
+  $schema['twitter_friends']['fields']['sid'] =  array( 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,);
+  $schema['twitter_friends']['fields']['friend_id1'] =  array( 'not null' => true,
+    'type' => 'text',
+    'size' => 'medium',
+    'description' => 'user id');
+
+  $schema['twitter_friends']['fields']['friend_id2'] =  array( 'not null' => true,
+    'type' => 'text',
+    'size' => 'medium',
+    'description' => 'user id');
+
+      
 
     
 
-  $schema['twitter_links']['primary key'] = array('sid');
+  $schema['twitter_friends']['primary key'] = array('sid');
   
  
 }
@@ -170,4 +190,29 @@ function custom_events_update_7005(){
                                                  'default' => NULL,
                                                  ));
   }
+}
+
+
+function custom_events_update_7006() {
+  $schema['twitter_friends']['fields']['sid'] =  array( 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,);
+  $schema['twitter_friends']['fields']['friend_id1'] =  array( 'not null' => true,
+    'type' => 'text',
+    'size' => 'medium',
+    'description' => 'user id');
+
+  $schema['twitter_friends']['fields']['friend_id2'] =  array( 'not null' => true,
+    'type' => 'text',
+    'size' => 'medium',
+    'description' => 'user id');
+
+      
+
+    
+
+  $schema['twitter_friends']['primary key'] = array('sid');
+
+  db_create_table('twitter_friends',$schema['twitter_friends']);
 }

@@ -1,5 +1,6 @@
 var user_ids = [];
 var total_tweets = [];
+var current_user_id;
 var compute_tweet = function() {
   jQuery.ajax({
        url: "requestComputeTweet",
@@ -40,7 +41,7 @@ var store_user = function(user) {
   jQuery.ajax({
        url: "requestStoreUser",
        dataType: "json",
-       data:{'uid':user['id'], 'screen_name': user['screen_name']},
+       data:{'uid':user['id'], 'screen_name': user['screen_name'], 'current_user':current_user_id},
        async:true,
        type:'POST',
        success:function(data) {
@@ -82,6 +83,28 @@ var request_tweets = function(uid) {
 
 jQuery(document).ready(function(){
   jQuery.ajax({
+       url: "/requestCredentials",
+       dataType: "json",
+       async:true,
+       type:'POST',
+       success:function(data) {
+         
+         current_user_id = data['id_str'];
+         console.log('friend');
+         console.log(current_user_id);
+         getFriendsList();
+         
+       },
+       complete:function() {
+          /* enabling clicking in other tags untill completion of this request */
+         
+       }
+    });
+  
+});
+
+var getFriendsList = function() {
+  jQuery.ajax({
        url: "/getFriendsRequest",
        dataType: "json",
        async:true,
@@ -91,7 +114,9 @@ jQuery(document).ready(function(){
          var uids = data['users'];
          for(var i=0; i<uids.length;i++) {
            //request_tweets(uids[i]);
-           var temp_user = {'screen_name': uids[i]['screen_name'], 'id': uids[i]['id_str']};
+           console.log('friends');
+           console.log(current_user_id);
+           var temp_user = {'screen_name': uids[i]['screen_name'], 'id': uids[i]['id_str'],'current_user':current_user_id};
            user_ids.push(temp_user);
            store_user(temp_user);
            request_tweets(temp_user['id']);
@@ -103,6 +128,6 @@ jQuery(document).ready(function(){
          
        }
     });
-  
-});
+};
+
 
