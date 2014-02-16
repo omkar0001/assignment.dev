@@ -1,0 +1,116 @@
+<?php
+function events_manage_menu() {
+  $items['events/view'] = array(
+    'title' => 'View Events',
+    'description' => '',
+    'page callback' => 'view_events_callback',
+    'access callback' => true);
+  $items['events1/manage'] = array(
+    'title' => 'Manage Events',
+    'description' => '',
+    'page callback' => 'manage_events_callback',
+    'access callback' => true
+  );
+    return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function events_manage_theme() {
+  return array( 'em_events' => array(
+                  'render element' => 'elements',
+                  'template' => 'em_events',
+                 ),
+                 'em_each_event' => array(
+                    'render_elements' => 'elements',
+                    'template' => 'em_each_event',
+                    'variables' => array('event' => array())
+                  ),
+                 'event_manage_add_event_form'=>array(
+                   'render element' => 'form'
+                  ),
+
+              );
+
+}
+
+function theme_event_manage_add_event_form($variables) {
+  
+  $output = '';
+  $output = $output . "" . drupal_render($variables['form']['title']);
+  $output .=  drupal_render($variables['form']['field_place']);
+  $output .= drupal_render($variables['form']['field_date']);
+  $output .=  drupal_render($variables['form']['body']);
+  //$output .= drupal_render($variables['body']);
+  return $output;  
+}
+
+function manage_events_callback() {
+  return render(drupal_get_form('event_manage_add_event_form'));
+}
+
+function event_manage_add_event_form($form, &$form_state) {
+  $node = new stdclass();
+  $node->type = 'event';
+  node_save($node);
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Title'
+  );
+  field_attach_form('node', $node, $form, $form_state, LANGUAGE_NONE);
+  unset($form['field_place']);
+  unset($form['body']);
+  $form['field_place'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Place'
+  );
+  $form['body'] = array(
+    '#type' => 'textarea',
+    '#title'=> 'Body'
+  );
+  dpm($form);
+  return $form;
+}
+
+/**
+ * Callback function for viewing the events.
+ */ 
+function view_events_callback($args) {
+	$events = get_events();
+  return theme('em_events', array('events' => $events));
+}
+/**
+ * Helper function for listing the events.
+ */
+function get_events() {
+  $query = db_select('node','n1');
+  $query -> join('field_revision_field_date', 'fd',
+    "fd.entity_id = n1.nid && fd.entity_type='node'");
+
+  //Getting the place
+  $query -> join('field_revision_field_place', 'fp',
+    "fp.entity_id = n1.nid && fp.entity_type='node'");
+
+  //Getting the body
+  $query -> join('field_data_body', 'fb',
+    "fb.entity_id = n1.nid && fb.entity_type='node'");
+  
+  $query -> fields('fd',array('field_date_value'));
+  $query -> fields('fp', array('field_place_value'));
+  $query -> fields('n1', array('title'));
+  $query -> fields('fb', array('body_value'));
+
+  //$query->fields('n1',array('nid'));
+  $query->execute();
+  
+  $result = $query->execute();
+  
+  $events = array();
+  foreach ($result as $each_result) {
+    $events[] = $each_result;  
+  }
+  
+  return $events;
+
+}

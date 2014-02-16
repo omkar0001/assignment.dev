@@ -335,19 +335,7 @@ function custom_events_menu() {
    } 
  }
 
-/**
- * Implements hook_theme()
- */
-function custom_events_theme_registry_alter(&$theme) {
-  echo "hello";
- 
-  $theme['front_page'] = array(
-        'variables' => array('computation_stats' => array(),
-        ),
-        'template' => 'front_page'
 
-  );
-} 
 
 
  function request_credentials() {

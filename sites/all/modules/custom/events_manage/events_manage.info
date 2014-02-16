@@ -1,0 +1,3 @@
+name = manage events 
+description = This module provides interface to handle events.
+core = 7.x
