@@ -53,6 +53,7 @@ exclude[css][] = 'modules/user/user.css'
 
 stylesheets[all][] = dist/css/bootstrap.min.css
 stylesheets[all][] = dist/css/bootstrap-theme.min.css
+stylesheets[all][] = font-awesome/css/font-awesome.min.css
 scripts[] = dist/js/bootstrap.min.js
 
 ; Information added by drupal.org packaging script on 2013-09-21

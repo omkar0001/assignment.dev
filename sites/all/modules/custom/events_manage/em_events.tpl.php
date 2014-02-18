@@ -2,36 +2,48 @@
 <?php
 /**
  * $events - List of events.
+ * $is_manage - Whether the list can be edited or not.
  */
+
+
 
   $events_css_path = drupal_get_path('module','events_manage')."/em_events.css";
   drupal_add_css($events_css_path);
 ?>
+
+<div class="modal fade" id="addEventModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="addEventModalLabel">Add Event</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <?
+            $node = new stdclass();
+            $node->type = 'event';
+            node_save($node);
+            $form_state = array();
+            $form_state['event_node'] = $node;
+            echo render(drupal_build_form('event_manage_add_event_form',$form_state, 'modal'));
+          ?>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="save-event" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <ul id="events_container">
  <?foreach($events as $each_event){?>
- <li class="event_container">
-  <span class="event_date_time">SATURDAY, FEB 15</span>
-  <div>
-   <div class="event_time">10 <span>AM</span></div>
-   <div class="event_inner_container">
-    <span class="event_place"><?echo $each_event->field_place_value?></span>
-    <span class="event_title"><?echo $each_event->title?></span>
-    <span class="event_description"><?echo substr($each_event->body_value,0,300)?></span>
-   </div>
-  </div>
- </li>
+   <?echo theme("em_each_event", array("event" => $each_event,'is_manage' => $is_manage))?>
  <?}?>
 
- <li class="event_container">
-  <span class="event_date_time">SATURDAY, FEB 15</span>
-  <div>
-   <div class="event_time">10 <span>AM</span></div>
-   <div class="event_inner_container">
-    <span class="event_place">Hyderabad</span>
-    <span class="event_title">Gunday</span>
-    <span class="event_description">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim</span>
-   </div>
-  </div>
- </li>
+
 
 </ul>

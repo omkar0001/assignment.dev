@@ -1,3 +1,5 @@
 name = manage events 
 description = This module provides interface to handle events.
 core = 7.x
+stylesheets[all][] = topbar.css
+stylesheets[all][] = em_buttons.css

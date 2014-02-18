@@ -1,4 +1,7 @@
 <?php
+/**
+ * Implements hook_menu().
+ */
 function events_manage_menu() {
   $items['events/view'] = array(
     'title' => 'View Events',
@@ -11,9 +14,108 @@ function events_manage_menu() {
     'page callback' => 'manage_events_callback',
     'access callback' => true
   );
-    return $items;
+  $items['event_add_ajax/%'] = array(
+    'title' => 'Ajax add event callback',
+    'type' => MENU_CALLBACK,
+    'access callback' => true,
+    'page callback' => 'event_add_ajax_callback',
+    'page arguments' => array(1),
+  );
+  $items['event_edit_ajax/%/%'] = array(
+    'title' => 'Ajax edit event callback',
+    'type' => MENU_CALLBACK,
+    'access callback' => true,
+    'page callback' => 'event_edit_ajax_callback',
+    'page arguments' => array(1,2),
+  );
+  $items['event_delete/%'] = array(
+    'title' => 'Delete event',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'event_delete_callback',
+    'page arguments' => array(1),
+    'access callback' => true,
+
+  );
+  return $items;
 }
 
+
+/**
+ * Implements hook_block_info().
+ */
+function events_manage_block_info() {
+  $blocks['events_manage_filter_block'] = array('info' => t('Events filter sidebar block.'),
+                                      'cache' => DRUPAL_NO_CACHE, );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function events_manage_block_view($delta='') {
+  
+  if($delta == 'events_manage_filter_block') {
+    $output = "<ul class='nav nav-list'>
+                 <li class='active'>
+                   <a onClick='show_vocab_catalog(" . $term_id . ",0)'>All</a>
+                 </li>
+                 <li class=''>
+                   <a onClick='show_vocab_catalog(" . $term_id . ",0)'>Featured Events</a>
+                 </li>
+                 <li class=''>
+                   <a onClick='show_vocab_catalog(" . $term_id . ",0)'>Recent Events</a>
+                 </li>
+                 <li class=''>
+                   <a onClick='show_vocab_catalog(" . $term_id . ",0)'>I am attending</a>
+                 </li>
+
+               </ul>";
+
+    $block['content'] = array('#markup' => $output);
+    return $block;
+  }
+}
+
+/**
+ * Event delete callback.
+ */
+function event_delete_callback($event_id) {
+  event_delete($event_id);
+}
+
+/**
+ * Delete event helper function.
+ */
+function event_delete($event_id) {
+  node_delete($event_id);
+}
+
+/**
+ * Edit event through ajax call back.
+ */
+function event_edit_ajax_callback($ajax, $event_id) {
+  $event_node = node_load($event_id);
+  $form_state['event_node'] = $event_node;
+  $commands[] = ajax_command_replace('#event_container_' . $event_id, "<div id='event_container_" . $event_id . "'>" . render(drupal_build_form('event_manage_add_event_form',$form_state)) . "</div>");
+  ajax_deliver(array('#type' => 'ajax', '#commands' => $commands));
+}
+
+
+/**
+ * Add event through ajax call back
+ */
+function event_add_ajax_callback($ajax) {
+  if($ajax == 'ajax') {
+    $node = new stdclass();
+    $node->type = 'event';
+    node_save($node);
+    $form_state = array();
+    $form_state['event_node'] = $node;
+    $commands[] = ajax_command_replace('#add_event', "<div id='add_event'>" . render(drupal_build_form('event_manage_add_event_form',$form_state)) . "</div>");
+
+    ajax_deliver(array('#type' => 'ajax', '#commands' => $commands));
+  }
+}
 /**
  * Implements hook_theme().
  */
@@ -27,50 +129,107 @@ function events_manage_theme() {
                     'template' => 'em_each_event',
                     'variables' => array('event' => array())
                   ),
+                  'event_edit_modal' => array(
+                    'render_elements' => 'elements',
+                    'template' => 'event_edit_modal',
+                    'variables' => array('event' => array())
+                  ),
                  'event_manage_add_event_form'=>array(
                    'render element' => 'form'
                   ),
+
 
               );
 
 }
 
+
+/**
+ * Add event form theme.
+ */
 function theme_event_manage_add_event_form($variables) {
   
+
   $output = '';
   $output = $output . "" . drupal_render($variables['form']['title']);
   $output .=  drupal_render($variables['form']['field_place']);
   $output .= drupal_render($variables['form']['field_date']);
   $output .=  drupal_render($variables['form']['body']);
-  //$output .= drupal_render($variables['body']);
+  $output .= drupal_render_children($variables['form']);
   return $output;  
 }
 
+/**
+ * Callback for manage events.
+ */
 function manage_events_callback() {
-  return render(drupal_get_form('event_manage_add_event_form'));
+  
+  
+  //Adding the js path.
+  $events_js_path = drupal_get_path('module', 'events_manage') . "/js/events_manage.js";
+  drupal_add_js($events_js_path);
+  //Adding the add event css path.
+  $add_event_css_path = drupal_get_path('module', 'events_manage') . "/add_event.css";
+  drupal_add_css($add_event_css_path);
+  //Adding the modal events less.
+  $event_modal_css_path = drupal_get_path('module','events_manage') . "/events_modal.css";
+  drupal_add_css($event_modal_css_path);
+  //Added the ajax and form libraries.
+  drupal_add_library("system","drupal.ajax");
+  drupal_add_library("system", "jquery.form");
+  $output = "<div id='add_event'><a class='em_btn add_event' id='add_event_button' style=''>Add Event</a></div>";
+  $events = get_events();
+  $output = $output . "" . theme('em_events', array('events' => $events, 'is_manage' => true));
+  return $output;
 }
 
-function event_manage_add_event_form($form, &$form_state) {
-  $node = new stdclass();
-  $node->type = 'event';
-  node_save($node);
+/**
+ * Add event form.
+ */
+function event_manage_add_event_form($form, &$form_state, $context) {
+  
+  $node = $form_state['event_node'];
   $form['title'] = array(
     '#type' => 'textfield',
-    '#title' => 'Title'
+    '#title' => 'Title',
+    '#default_value' => isset($node->title) ? $node->title:''
   );
   field_attach_form('node', $node, $form, $form_state, LANGUAGE_NONE);
   unset($form['field_place']);
   unset($form['body']);
   $form['field_place'] = array(
     '#type' => 'textfield',
-    '#title' => 'Place'
+    '#title' => 'Place',
+    '#default_value' => isset($node->field_place[LANGUAGE_NONE][0]['value']) ? $node->field_place[LANGUAGE_NONE][0]['value']:''
   );
   $form['body'] = array(
     '#type' => 'textarea',
-    '#title'=> 'Body'
+    '#title'=> 'Body',
+    '#default_value' => isset($node->body[LANGUAGE_NONE][0]['value']) ? $node->body[LANGUAGE_NONE][0]['value']:''
   );
-  dpm($form);
+  //switch($context) {
+    //case "submitform": 
+      $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Add Event'
+      );
+    //  break;
+
+  //}
   return $form;
+}
+
+/**
+ * Event add submit handler
+ */
+function event_manage_add_event_form_submit($form, &$form_state) {
+  dd('submitttttting');
+  $node = $form_state['event_node'];
+  field_attach_submit('node',$node,$form, $form_state);
+  $node->body[LANGUAGE_NONE][0]['value'] = $form_state['values']['body'];
+  $node->field_place[LANGUAGE_NONE][0]['value'] = $form_state['values']['field_place'];
+  $node->title = $form_state['values']['title'];
+  node_save($node);
 }
 
 /**
@@ -78,8 +237,9 @@ function event_manage_add_event_form($form, &$form_state) {
  */ 
 function view_events_callback($args) {
 	$events = get_events();
-  return theme('em_events', array('events' => $events));
+  return theme('em_events', array('events' => $events, 'is_manage' => false));
 }
+
 /**
  * Helper function for listing the events.
  */
@@ -95,13 +255,11 @@ function get_events() {
   //Getting the body
   $query -> join('field_data_body', 'fb',
     "fb.entity_id = n1.nid && fb.entity_type='node'");
-  
+  $query -> fields("n1",array('nid'));
   $query -> fields('fd',array('field_date_value'));
   $query -> fields('fp', array('field_place_value'));
   $query -> fields('n1', array('title'));
   $query -> fields('fb', array('body_value'));
-
-  //$query->fields('n1',array('nid'));
   $query->execute();
   
   $result = $query->execute();

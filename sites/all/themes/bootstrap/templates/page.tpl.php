@@ -1,5 +1,17 @@
 <header id="navbar" role="banner" class="navbar navbar-fixed-top">
-  
+  <ul class="nav nav-tabs">
+      <li class="active">
+        <a href="#">Manage Events</a>
+      </li>
+      <li>
+        <a href="#">Manage Users</a>
+      </li> 
+      
+    </ul>
+
+    <ul id="em_signup" class="nav nav-tabs">
+      <li><a class="em_highlight_text" id="em_signup_button">Sign Up</a></li>
+    </ul>
 </header>
 
 <div class="main-container container">
@@ -8,27 +20,7 @@
     <?php if (!empty($site_slogan)): ?>
       <p class="lead"><?php print $site_slogan; ?></p>
     <?php endif; ?>
-    <ul class="nav nav-tabs" style="margin-left:200px;">
-      <li class="active">
-        <a href="#">Rankings</a>
-      </li>
-      <li>
-        <a href="#">Colleges</a>
-      </li> 
-      <li>
-        <a href="#">Events</a>
-      </li>
-      <li>
-        <a href="#">Admissions</a>
-      </li>
-      <form style="float:left;margin-left:375px;" class="form-search">
-        <div class="input-append" style="width:200px;">
-          <input placeholder="Search Colleges" type="text" style="height:33px;" class="span2 search-query">
-          <button type="submit" class="btn"><i class="icon-search"></i></button>
-        </div>
-
-      </form>
-    </ul>
+    
     <?php print render($page['header']); ?>
   </header> <!-- /#header -->
 
@@ -44,7 +36,13 @@
       <?php if (!empty($page['highlighted'])): ?>
         <div class="highlighted hero-unit"><?php print render($page['highlighted']); ?></div>
       <?php endif; ?>
-      <?php if (!empty($breadcrumb)): print $breadcrumb; endif;?>
+      
+      <?php 
+      //Removing the breadcrumb
+      /*
+      if (!empty($breadcrumb)): print $breadcrumb; endif;
+       */
+      ?>
       <a id="main-content"></a>
       <?php print render($title_prefix); ?>
       <?php print render($title_suffix); ?>
