@@ -3,12 +3,12 @@
  * Implements hook_menu().
  */
 function events_manage_menu() {
-  $items['events/view'] = array(
+  $items['event/view'] = array(
     'title' => 'View Events',
     'description' => '',
     'page callback' => 'view_events_callback',
     'access callback' => true);
-  $items['events1/manage'] = array(
+  $items['event/manage'] = array(
     'title' => 'Manage Events',
     'description' => '',
     'page callback' => 'manage_events_callback',
