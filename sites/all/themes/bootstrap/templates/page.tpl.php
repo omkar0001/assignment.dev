@@ -10,7 +10,7 @@
     </ul>
 
     <ul id="em_signup" class="nav nav-tabs">
-      <li><a class="em_highlight_text" id="em_signup_button">Sign Up</a></li>
+      <li><a href="/user/login" class="em_highlight_text" id="em_signup_button">Sign Up</a></li>
     </ul>
 </header>
 

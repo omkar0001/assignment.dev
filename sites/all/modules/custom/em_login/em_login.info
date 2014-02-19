@@ -1,0 +1,3 @@
+name = Login and register
+description = This module provides interface to handle login and signup
+core = 7.x

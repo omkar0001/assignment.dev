@@ -1,0 +1,39 @@
+<?php
+/**
+ * Implements hook_menu_alter()
+ */
+function em_login_menu_alter(&$items){
+  $items['user/login']['page callback'] = 'em_login_page_callback';
+  $items['user/login']['type'] = MENU_CALLBACK;
+  $items['user/register']['type'] = MENU_CALLBACK;
+  $items['user/register']['page callback'] = 'em_register_page_callback';
+}
+
+
+/**
+ * Login page menu callback.
+ */
+function em_login_page_callback($args) {
+  $login_css_path = drupal_get_path('module','em_login') . "/css/em_login.css";
+  drupal_add_css($login_css_path);
+  $form = drupal_get_form("user_login");
+  $output = "<div id='login_block'>";
+  $output .= "<div id='login_text'>Are you registered?<a style='margin-left:5px;font-weight:bold;color:#ff7e16;' href='/user/register'>Register</a></div>";
+  $output .= "<div id='em_user_login'>" . drupal_render($form) . "</div>";
+  $output .= "</div>";
+  return $output; 	
+}
+
+/**
+ * Register page menu callback.
+ */
+function em_register_page_callback($args) {
+  $register_css_path = drupal_get_path('module','em_login') . "/css/em_register.css";
+  drupal_add_css($register_css_path);
+  $form = drupal_get_form("user_register_form");
+  $output = "<div id='register_block'>";
+  $output .= "<div id='register_text'>Are you registered?<a style='margin-left:5px;font-weight:bold;color:#ff7e16;' href='/user/register'>Register</a></div>";
+  $output .= "<div id='em_user_regsiter'>" . drupal_render($form) . "</div>";
+  $output .= "</div>";
+  return $output; 	
+}
