@@ -168,6 +168,9 @@ function manage_events_callback() {
   //Adding the js path.
   $events_js_path = drupal_get_path('module', 'events_manage') . "/js/events_manage.js";
   drupal_add_js($events_js_path);
+  //Adding the sidebar css.
+  $add_event_manage_sidebar_css_path = drupal_get_path("module","events_manage") . "/events_manage_sidebar.css";
+  drupal_add_css($add_event_manage_sidebar_css_path);
   //Adding the add event css path.
   $add_event_css_path = drupal_get_path('module', 'events_manage') . "/add_event.css";
   drupal_add_css($add_event_css_path);
@@ -207,15 +210,11 @@ function event_manage_add_event_form($form, &$form_state, $context) {
     '#title'=> 'Body',
     '#default_value' => isset($node->body[LANGUAGE_NONE][0]['value']) ? $node->body[LANGUAGE_NONE][0]['value']:''
   );
-  //switch($context) {
-    //case "submitform": 
-      $form['submit'] = array(
-        '#type' => 'submit',
-        '#value' => 'Add Event'
-      );
-    //  break;
-
-  //}
+      
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Add Event'
+  );
   return $form;
 }
 

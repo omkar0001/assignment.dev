@@ -9,6 +9,177 @@ function em_login_menu_alter(&$items){
   $items['user/register']['page callback'] = 'em_register_page_callback';
 }
 
+/**
+ * Implements hook_menu().
+ */
+ function em_login_menu() {
+   $items['em_user/manage'] = array(
+    'title' => 'Manage Users',
+    'description' => '',
+    'page callback' => 'manage_users_callback',
+    'access callback' => true
+  );
+  $items['em_user_activate/%user'] = array(
+    'title' => 'Activate User',
+    'description' => 'Activates a particular user',
+    'page callback' => 'em_user_activate',
+    'access callback' => true,
+    'page arguments' => array(1)
+  );
+  $items['em_user_deactivate/%user'] = array(
+    'title' => 'Deactivate User',
+    'description' => 'Deactivates a user',
+    'page callback' => 'em_user_deactivate',
+    'access callback' => true,
+    'page arguments' => array(1),
+  );
+  return $items;
+ }
+
+/**
+ * Activates a particular user.
+ */
+function em_user_activate($user) {
+  $user->status = 1;
+  user_save($user);
+}
+
+/**
+ * Deactivates a particular user 
+ */
+function em_user_deactivate($user) {
+  $user->status = 0;
+  user_save($user);
+}
+
+
+/**
+ * Manage users page callback.
+ */
+function manage_users_callback($args) {
+  $manage_users_js_path = drupal_get_path("module", 'em_login') . "/js/em_user_manage.js";
+  drupal_add_js($manage_users_js_path);
+  //Adding the sidebar css.
+  $em_user_manage_sidebar_css_path = drupal_get_path("module","em_login") . "/css/em_user_manage_sidebar.css";
+  drupal_add_css($em_user_manage_sidebar_css_path);
+  return manage_users_table();	
+} 
+
+
+/**
+ * Manage user table.
+ */
+function manage_users_table() {
+  $form_state = array();
+  return render(drupal_build_form('em_user_manage_form',$form_state));
+}
+
+
+/**
+ * Call back for usermanage form
+ */
+ function em_user_manage_form($form, &$form_state) {
+   
+   $header = array(
+    'username' => array('data' => t('Username'),),
+    'firstname' => array('data' => t('First Name'),),
+    'lastname' => array('data' => t('Last Name')),
+    'access' => array('data' => t('Last access'),),
+    'status' => array('data' => t('Actions')),
+   );
+   //Getting the user ids.
+   $query = db_select('users', 'u');
+   $query->condition('u.uid', 0, '<>');
+   $query ->fields('u', array('uid', 'name', 'status', 'created', 'access')); 
+   $result = $query->execute();
+   $user_ids = array();
+   foreach ($result as $account) {
+     $user_ids[] = $account->uid;
+   }
+   $accounts = user_load_multiple($user_ids);
+   
+   
+   //Getting the profiles of type main.
+   $query = db_select('profile', 'p');
+   $query->condition('p.type','main');
+   $query->condition('p.uid', $user_ids, 'IN');
+   $query->fields('p',array(pid));
+   $result = $query->execute();
+   
+   foreach($result as $each_profile) {
+     $profile_ids[] = $each_profile->pid;
+   }
+   $profiles = profile2_load_multiple($profile_ids);
+
+   $profiles_accounts = array();
+   foreach($profiles as $each_profile) {
+     dd("each profile");
+     $profiles_accounts[$each_profile->uid] = $each_profile;   
+   }
+   foreach($accounts as $account) {
+     $firstname = '-';
+     $lastname = '-';
+     if(isset($profiles_accounts[$account->uid])) {
+       $profile = $profiles_accounts[$account->uid];
+       $firstname = $profile->field_first_name[LANGUAGE_NONE][0]['value'];
+       $lastname = $profile->field_last_name[LANGUAGE_NONE][0]['value'];
+     }  
+       $options[$account->uid] = array(
+        'username' => $account->name,
+        'firstname' => $firstname,
+        'lastname' => $lastname,
+        'member_for' => format_interval(REQUEST_TIME - $account->created),
+        'access' =>  $account->access ? t('@time ago', array('@time' => format_interval(REQUEST_TIME - $account->access))) : t('never'),
+        'status' => array('data' => array('#type' => 'link', '#title' => t('edit'), '#href' => "user/$account->uid/edit", '#options' => array('query' => $destination))),
+       );
+       if($account -> status == 0)
+         $options[$account->uid]['status'] = "<a class='em_user_activate_deactivate em_user_activate' id='user_activate_deactivate_" . $account->uid . "'>Activate</a>";
+       else
+         $options[$account->uid]['status'] = "<a class='em_user_activate_deactivate em_user_deactivate' id='user_activate_deactivate_" . $account->uid . "'>Deactivate</a>";
+   }
+   $form['accounts'] = array(
+    '#type' => 'tableselect',
+    '#header' => $header,
+    '#options' => $options,
+    '#empty' => t('No people available.'),
+  );
+  return $form;
+ }
+
+
+/**
+ * Implements hook_block_info().
+ */
+function em_login_block_info() {
+  $blocks['em_user_manage_filter_block'] = array('info' => t('Users manage filter sidebar block.'),
+                                      'cache' => DRUPAL_NO_CACHE, );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function em_login_block_view($delta='') {
+  
+  if($delta == 'em_user_manage_filter_block') {
+    $output = "<ul class='nav nav-list'>
+                 <li class='active'>
+                   <a id='em_filters_users_-1' class='em_filter_users'>All</a>
+                 </li>
+                 <li class=''>
+                   <a id='em_filter_users_0'>Blocked Users</a>
+                 </li>
+                 <li class=''>
+                   <a id='em_filter_users_1'>Active Users</a>
+                 </li>
+
+               </ul>";
+
+    $block['content'] = array('#markup' => $output);
+    return $block;
+  }
+}
+
 
 /**
  * Login page menu callback.
@@ -32,8 +203,15 @@ function em_register_page_callback($args) {
   drupal_add_css($register_css_path);
   $form = drupal_get_form("user_register_form");
   $output = "<div id='register_block'>";
-  $output .= "<div id='register_text'>Are you registered?<a style='margin-left:5px;font-weight:bold;color:#ff7e16;' href='/user/register'>Register</a></div>";
+  $output .= "<div id='register_text'>Aldready registered?<a style='margin-left:5px;font-weight:bold;color:#ff7e16;' href='/user/login'>Sign Up</a></div>";
   $output .= "<div id='em_user_regsiter'>" . drupal_render($form) . "</div>";
   $output .= "</div>";
   return $output; 	
 }
+
+/**
+ * Implements hook_form_FORMID_alter()
+ */
+ function em_login_form_user_register_form_alter(&$form, &$form_alter) {
+
+ }
