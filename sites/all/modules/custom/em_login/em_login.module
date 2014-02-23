@@ -38,13 +38,19 @@ function em_login_menu_alter(&$items){
   return $items;
  }
 
+/**
+ * Implements hook_user_login
+ */
+function em_login_user_login(&$edit, $account) {
+  $edit['redirect'] = 'event/view';
+}
 
 /**
  * Implements hook_user_insert.
  */
 function em_login_user_insert(&$edit, $account, $category) {
-  $edit['pass'] = 'password';
-  user_save($account, $edit);
+  //$edit['pass'] = 'password';
+  //user_save($account, $edit);
 }
 
 
@@ -55,7 +61,7 @@ function em_has_access($entity_type, $action, $account=NULL) {
   }
   switch($action) {
     case 'manage' :
-      if(in_array('administrators', $user->roles)) {
+      if(in_array('administrators', $user->roles) || $account->uid == 1) {
         return true;
       
       } else {
