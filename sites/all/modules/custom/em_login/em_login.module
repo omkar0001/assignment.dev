@@ -17,7 +17,8 @@ function em_login_menu_alter(&$items){
     'title' => 'Manage Users',
     'description' => '',
     'page callback' => 'manage_users_callback',
-    'access callback' => true
+    'access callback' => 'em_has_access',
+    'access arguments' => array('user', 'manage')
   );
   $items['em_user_activate/%user'] = array(
     'title' => 'Activate User',
@@ -33,8 +34,39 @@ function em_login_menu_alter(&$items){
     'access callback' => true,
     'page arguments' => array(1),
   );
+
   return $items;
  }
+
+
+/**
+ * Implements hook_user_insert.
+ */
+function em_login_user_insert(&$edit, $account, $category) {
+  $edit['pass'] = 'password';
+  user_save($account, $edit);
+}
+
+
+function em_has_access($entity_type, $action, $account=NULL) {
+  global $user;
+  if($account == null) {
+    $account = $user;
+  }
+  switch($action) {
+    case 'manage' :
+      if(in_array('administrators', $user->roles)) {
+        return true;
+      
+      } else {
+        return false;
+      }
+     break; 
+
+  }
+  return true;
+}
+
 
 /**
  * Activates a particular user.

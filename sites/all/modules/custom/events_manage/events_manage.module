@@ -12,7 +12,8 @@ function events_manage_menu() {
     'title' => 'Manage Events',
     'description' => '',
     'page callback' => 'manage_events_callback',
-    'access callback' => true
+    'access callback' => 'em_has_access',
+    'access arguments' => array('event','manage')
   );
   $items['event_add_ajax/%'] = array(
     'title' => 'Ajax add event callback',

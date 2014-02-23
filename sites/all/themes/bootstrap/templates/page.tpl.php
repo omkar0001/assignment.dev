@@ -1,17 +1,38 @@
+<? 
+  
+?>
 <header id="navbar" role="banner" class="navbar navbar-fixed-top">
   <ul class="nav nav-tabs">
+      <?foreach($main_menu as $each_menu) {?>
+        <?if("/" . $each_menu['href'] == $_SERVER['REQUEST_URI'] || ($_SERVER['REQUEST_URI'] == "/" && "/" . $each_menu['href'] == $front_page)) {?>
+          <li class='active'>
+            <a href="/<?echo $each_menu['href']; ?>"><?echo $each_menu['title'] ?></a>       
+          </li>
+        <?} else {?>
+          <li>
+            <a href="/<?echo $each_menu['href']; ?>"><?echo $each_menu['title'] ?></a>       
+          </li>
+        <? }?>  
+      <?}?>
+      <!--
       <li class="active">
         <a href="#">Manage Events</a>
       </li>
       <li>
         <a href="#">Manage Users</a>
       </li> 
-      
+      -->
     </ul>
 
     <ul id="em_signup" class="nav nav-tabs">
-      <li><a href="/user/login" class="em_highlight_text" id="em_signup_button">Sign Up</a></li>
+      <?if($logged_in) {?>
+        <li><a href="/user/logout" class="em_highlight_text" id="em_signup_button">Logout</a></li>
+      <?} else {?>
+        <li><a href="/user/login" class="em_highlight_text" id="em_signup_button">Sign Up</a></li>
+      <?}?>
     </ul>
+  
+
 </header>
 
 <div class="main-container container">
