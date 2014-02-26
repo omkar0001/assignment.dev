@@ -1,0 +1,17 @@
+<?php
+function em_libraries_library() {
+  $base_library_path = drupal_get_path("module", 'em_libraries') . "/libraries";
+  $lib['fullcalendar'] =  array(
+    'title' => 'Full calendar',
+    'website' => '',
+    'version' => '2.0',
+    'js' => array(
+      $base_library_path . '/fullcalendar/out/fullcalendar.js'=>array(),
+    ),
+    'css' => array(
+      $base_library_path . '/fullcalendar/out/fullcalendar.css'=>array(),
+      $base_library_path . '/fullcalendar/out/fullcalendar.print.css' => array(),
+    ),
+  );
+  return $lib;
+}

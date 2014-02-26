@@ -164,9 +164,13 @@ function theme_event_manage_add_event_form($variables) {
  * Callback for manage events.
  */
 function manage_events_callback() {
-  
-  
-  //Adding the js path.
+  //Adding the fullcalendar library.
+  drupal_add_library('em_libraries', 'fullcalendar');
+  //Adding the common calendar to the js path
+  $common_calendar_js_path = drupal_get_path("module", "events_manage") . "/js/em_common_calendar.js";
+  drupal_add_js($common_calendar_js_path);
+
+  //Adding events manage js path.
   $events_js_path = drupal_get_path('module', 'events_manage') . "/js/events_manage.js";
   drupal_add_js($events_js_path);
   //Adding the sidebar css.
@@ -236,7 +240,15 @@ function event_manage_add_event_form_submit($form, &$form_state) {
  * Callback function for viewing the events.
  */ 
 function view_events_callback($args) {
-	$events = get_events();
+  drupal_add_library('em_libraries', 'fullcalendar');
+	//Adding the common calendar to the js path
+  $common_calendar_js_path = drupal_get_path("module", "events_manage") . "/js/em_common_calendar.js";
+  drupal_add_js($common_calendar_js_path);
+  //Adding the common events js
+  $common_events_js_path = drupal_get_path("module", "events_manage") . "/js/common_events.js";
+  drupal_add_js($common_events_js_path);
+  
+  $events = get_events();
   return theme('em_events', array('events' => $events, 'is_manage' => false));
 }
 

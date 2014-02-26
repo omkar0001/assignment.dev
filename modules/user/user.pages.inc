@@ -315,8 +315,10 @@ function user_profile_form_submit($form, &$form_state) {
 
   // Populate $edit with the properties of $account, which have been edited on
   // this form by taking over all values, which appear in the form values too.
+  
   $edit = array_intersect_key((array) $account, $form_state['values']);
 
+  dpm($edit);
   user_save($account_unchanged, $edit, $category);
   $form_state['values']['uid'] = $account->uid;
 

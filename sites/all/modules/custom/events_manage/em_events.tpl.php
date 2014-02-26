@@ -39,6 +39,11 @@
   </div>
 </div>
 
+<div id="view_type_events">
+  <i class="em_calendar_view fa fa-calendar fa-2x"></i>
+  <i class="em_list_view fa-em-active fa fa-bars fa-2x"></i>  
+</div>
+<div id="em_calendar_view_container"> </div>
 <ul id="events_container">
  <?foreach($events as $each_event){?>
    <?echo theme("em_each_event", array("event" => $each_event,'is_manage' => $is_manage))?>

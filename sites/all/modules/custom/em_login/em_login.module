@@ -9,6 +9,18 @@ function em_login_menu_alter(&$items){
   $items['user/register']['page callback'] = 'em_register_page_callback';
 }
 
+
+/**
+ * Implements hook_theme().
+ */
+function em_login_theme() {
+  return array('em_profile' => array(
+                  'render element' => 'elements',
+                  'template' => 'em_profile',
+                 ),);
+
+}
+
 /**
  * Implements hook_menu().
  */
@@ -34,9 +46,24 @@ function em_login_menu_alter(&$items){
     'access callback' => true,
     'page arguments' => array(1),
   );
-
+  $items['em_profile'] = array(
+    'title' => 'Profile',
+    'description' => 'Profile of user',
+    'page callback' => 'em_profile_callback',
+    'access callback' => true,
+    'page arguments' => array(1)
+  );
+  
   return $items;
  }
+
+/**
+ * Profile callback.
+ */
+function em_profile_callback($args) {
+  return theme('em_profile');
+}
+
 
 /**
  * Implements hook_user_login
@@ -46,14 +73,18 @@ function em_login_user_login(&$edit, $account) {
 }
 
 /**
- * Implements hook_user_insert.
+ * Implements hook_user_presave.
  */
-function em_login_user_insert(&$edit, $account, $category) {
+function em_login_user_presave(&$edit, $account, $category) {
+  dd('password saving');
   //$edit['pass'] = 'password';
-  //user_save($account, $edit);
+  //user_save($account, $edit, 'account');
 }
 
 
+/**
+ * Access callback.
+ */
 function em_has_access($entity_type, $action, $account=NULL) {
   global $user;
   if($account == null) {
