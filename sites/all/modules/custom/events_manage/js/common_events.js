@@ -15,5 +15,6 @@ jQuery(document).ready(function(){
     jQuery(".em_calendar_view").addClass("fa-em-active");
     jQuery("#events_container").hide();
     jQuery("#em_calendar_view_container").show();
+    em_show_events("calendar", "em_calendar_view_container");
   });
 });

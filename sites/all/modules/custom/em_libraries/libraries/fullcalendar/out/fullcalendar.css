@@ -384,6 +384,9 @@ table.fc-border-separate {
 
 .fc-grid th {
 	text-align: center;
+    height:50px;
+	padding-top:10px;
+	border-color:#08c;
 	}
 
 .fc .fc-week-number {
@@ -398,6 +401,7 @@ table.fc-border-separate {
 .fc-grid .fc-day-number {
 	float: right;
 	padding: 0 2px;
+
 	}
 	
 .fc-grid .fc-other-month .fc-day-number {

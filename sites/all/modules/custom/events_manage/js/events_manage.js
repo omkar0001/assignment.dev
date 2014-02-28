@@ -1,8 +1,7 @@
 var delete_event;
-
 jQuery(document).ready(function() {
   //Initiate the calendar.
-  initiate_calendar();
+  //initiate_calendar();
   jQuery("#em_calendar_view_container").hide();
   console.log("Added the events")
   //Showing the list view
@@ -19,6 +18,8 @@ jQuery(document).ready(function() {
     jQuery(".em_calendar_view").addClass("fa-em-active");
     jQuery("#events_container").hide();
     jQuery("#em_calendar_view_container").show();
+    //initiate_calendar();
+    em_show_events("calendar", "em_calendar_view_container");
   });
 
   //When user click on save event in modal.
@@ -63,3 +64,4 @@ delete_event = function(event_id) {
   });
 
 };
+

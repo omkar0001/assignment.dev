@@ -1,10 +1,12 @@
 var initiate_calendar;
-initiate_calendar = function() {
+initiate_calendar = function(events_data) {
   console.log("initiating the calendar");
   var date = new Date();
   var d = date.getDate();
   var m = date.getMonth();
   var y = date.getFullYear();
+  console.log("events data");
+  console.log(events_data);
   jQuery("#em_calendar_view_container").fullCalendar({
       header: {
         left: 'prev,next today',
@@ -12,6 +14,8 @@ initiate_calendar = function() {
         right: 'month,basicWeek,basicDay'
       },
       editable: true,
+      events: events_data,
+      /*
       events: [
         {
           title: 'All Day Event',
@@ -58,5 +62,6 @@ initiate_calendar = function() {
           url: 'http://google.com/'
         }
       ]
+      */
     });
 };

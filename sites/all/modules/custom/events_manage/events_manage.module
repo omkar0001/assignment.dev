@@ -8,6 +8,14 @@ function events_manage_menu() {
     'description' => '',
     'page callback' => 'view_events_callback',
     'access callback' => true);
+
+  $items['event/events_data'] = array(
+    'title' => 'Events Data',
+    'type' => MENU_CALLBACK,
+    'description' => '',
+    'page callback' => 'events_data_callback',
+    'access callback' => true);
+
   $items['event/manage'] = array(
     'title' => 'Manage Events',
     'description' => '',
@@ -40,6 +48,30 @@ function events_manage_menu() {
   return $items;
 }
 
+/**
+ * Events data callback.
+ */
+function events_data_callback($args) {
+  $events = get_events();
+  $events_ids = array();
+  //Getting the events ids.
+  foreach($events as $each_event) {
+    $events_ids[] = $each_event->nid;
+  }
+  $events_loaded = node_load_multiple($events_ids);
+  $events_json_data = array();
+  $i = 0;
+  foreach($events_loaded as $each_event) {
+    $events_json_data[$i]['event_id'] = $each_event->nid;
+    $events_json_data[$i]['title'] = $each_event -> title;
+    $events_json_data[$i]['start_date'] = $each_event->field_date[LANGUAGE_NONE][0]['value'];
+    $events_json_data[$i]['end_date'] = $each_event-> field_end_date[LANGUAGE_NONE][0]['value'];
+    $i++;
+
+  }
+  echo json_encode($events_json_data);
+
+}
 
 /**
  * Implements hook_block_info().
@@ -155,8 +187,10 @@ function theme_event_manage_add_event_form($variables) {
   $output = $output . "" . drupal_render($variables['form']['title']);
   $output .=  drupal_render($variables['form']['field_place']);
   $output .= drupal_render($variables['form']['field_date']);
-  $output .=  drupal_render($variables['form']['body']);
-  $output .= drupal_render_children($variables['form']);
+  $output .= drupal_render($variables['form']['field_end_date']);
+
+  //$output .=  drupal_render($variables['form']['body']);
+  //$output .= drupal_render_children($variables['form']);
   return $output;  
 }
 
@@ -164,6 +198,9 @@ function theme_event_manage_add_event_form($variables) {
  * Callback for manage events.
  */
 function manage_events_callback() {
+  //Adding the events js helper.
+  $events_helper_js_path = drupal_get_path("module", "events_manage") . "/js/events_helper.js";
+  drupal_add_js($events_helper_js_path);
   //Adding the fullcalendar library.
   drupal_add_library('em_libraries', 'fullcalendar');
   //Adding the common calendar to the js path
@@ -213,6 +250,7 @@ function event_manage_add_event_form($form, &$form_state, $context) {
   $form['body'] = array(
     '#type' => 'textarea',
     '#title'=> 'Body',
+    '#weight' => 100,
     '#default_value' => isset($node->body[LANGUAGE_NONE][0]['value']) ? $node->body[LANGUAGE_NONE][0]['value']:''
   );
       
@@ -227,7 +265,6 @@ function event_manage_add_event_form($form, &$form_state, $context) {
  * Event add submit handler
  */
 function event_manage_add_event_form_submit($form, &$form_state) {
-  dd('submitttttting');
   $node = $form_state['event_node'];
   field_attach_submit('node',$node,$form, $form_state);
   $node->body[LANGUAGE_NONE][0]['value'] = $form_state['values']['body'];
@@ -240,6 +277,11 @@ function event_manage_add_event_form_submit($form, &$form_state) {
  * Callback function for viewing the events.
  */ 
 function view_events_callback($args) {
+  //Adding the events js helper.
+  $events_helper_js_path = drupal_get_path("module", "events_manage") . "/js/events_helper.js";
+  drupal_add_js($events_helper_js_path);
+
+  //Adding the fullcalendar library.
   drupal_add_library('em_libraries', 'fullcalendar');
 	//Adding the common calendar to the js path
   $common_calendar_js_path = drupal_get_path("module", "events_manage") . "/js/em_common_calendar.js";
@@ -263,7 +305,7 @@ function get_events() {
   //Getting the place
   $query -> join('field_revision_field_place', 'fp',
     "fp.entity_id = n1.nid && fp.entity_type='node'");
-
+  
   //Getting the body
   $query -> join('field_data_body', 'fb',
     "fb.entity_id = n1.nid && fb.entity_type='node'");
