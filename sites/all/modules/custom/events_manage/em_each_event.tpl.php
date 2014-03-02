@@ -3,7 +3,7 @@
  * $event - Event object.
  * $is_manage - Whether the event can be managed or not.
  */
-  dd("event");
+
   $event_load = node_load($event->nid);
   $profile_image_url = file_create_url($event_load -> field_em_event_image[LANGUAGE_NONE][0]['uri']);
 ?>
