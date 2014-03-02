@@ -1,4 +1,61 @@
 #addEventModal,div[id*="editEventModal"] {
+    div.form-item-field-place {
+      float:left;
+      margin-left:100px;
+    }
+    div.form-item-title {
+      float:left;
+    }
+    #edit-title, [id*="edit-title-"] {
+      width:200px;
+    }
+    #edit-body, [id*="edit-body-"] {
+      width:505px;
+    }
+    div.form-item-body {
+      float:left;
+      clear:both;
+    }
+    div#edit-field-em-event-image, div[id*="edit-field-em-event-image-"] {
+      float:left;
+      clear:both;
+    }
+    div#edit-field-end-date, div[id*="edit-field-end-date-"] {
+      float:left;
+      width:300px;
+      div.form-item-field-date-und-0-value-item {
+        div.help-block {
+          margin-top:0px;
+        }
+      }
+      .date-popup-init.date-clear {
+        width:100px;
+      }
+      .date-clear {
+        width:50px;
+        float:left;
+      }
+    }
+
+    div#edit-field-date, div[id*="edit-field-date-"] {
+      float:left;
+      width:300px;
+      div.form-item-field-date-und-0-value-item {
+        div.help-block {
+          margin-top:0px;
+        }
+      }
+      .date-popup-init.date-clear {
+        width:100px;
+      }
+      .date-clear {
+        width:50px;
+        float:left;
+      }
+    }
+    #edit-field-place, [id*="edit-field-place-"] {
+      width:200px;
+    }
     #edit-submit {
       display:none;
     }
@@ -6,17 +63,18 @@
       color:black;
       cursor:pointer;
     }
-	left:700px;
-	width:700px;
+	left:500px;
+	width:900px;
 	background:transparent;
 	overflow:hidden;
 	border:0px solid transparent;
 	.modal-content {
+    width: 700px;
 	  -webkit-box-shadow:0 0px 0px rgba(0,0,0,0,0);
 	  box-shadow: 0 0px 0px rgba(0,0,0,0,0);
       border:0px solid transparent;
     }
   .form-submit {
-    display:none;
+    display:none; 
   }
 }

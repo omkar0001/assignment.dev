@@ -86,7 +86,6 @@ function events_manage_block_info() {
  * Implements hook_block_view().
  */
 function events_manage_block_view($delta='') {
-  
   if($delta == 'events_manage_filter_block') {
     $output = "<ul class='nav nav-list'>
                  <li class='active'>
@@ -97,12 +96,15 @@ function events_manage_block_view($delta='') {
                  </li>
                  <li class=''>
                    <a onClick='show_vocab_catalog(" . $term_id . ",0)'>Recent Events</a>
-                 </li>
-                 <li class=''>
-                   <a onClick='show_vocab_catalog(" . $term_id . ",0)'>I am attending</a>
-                 </li>
+                 </li>";
 
-               </ul>";
+      if(user_is_logged_in()) {
+        $output .= "<li class=''>
+                   <a onClick='show_vocab_catalog(" . $term_id . ",0)'>I am attending</a>
+                 </li>";
+      }
+
+      $output .= "</ul>";
 
     $block['content'] = array('#markup' => $output);
     return $block;
@@ -189,8 +191,8 @@ function theme_event_manage_add_event_form($variables) {
   $output .= drupal_render($variables['form']['field_date']);
   $output .= drupal_render($variables['form']['field_end_date']);
 
-  //$output .=  drupal_render($variables['form']['body']);
-  //$output .= drupal_render_children($variables['form']);
+  $output .=  drupal_render($variables['form']['body']);
+  $output .= drupal_render_children($variables['form']);
   return $output;  
 }
 
@@ -198,6 +200,7 @@ function theme_event_manage_add_event_form($variables) {
  * Callback for manage events.
  */
 function manage_events_callback() {
+  $GLOBALS['em_banner'] = true;
   //Adding the events js helper.
   $events_helper_js_path = drupal_get_path("module", "events_manage") . "/js/events_helper.js";
   drupal_add_js($events_helper_js_path);
@@ -258,13 +261,22 @@ function event_manage_add_event_form($form, &$form_state, $context) {
     '#type' => 'submit',
     '#value' => 'Add Event'
   );
+
+  $form['#submit'] = array();
+  $form['#submit'][] = 'event_manage_add_event_form_submit_1';
+
   return $form;
+}
+
+function event_manage_add_event_form_validate($form, &$form_state) {
+  dd('form validating');
 }
 
 /**
  * Event add submit handler
  */
-function event_manage_add_event_form_submit($form, &$form_state) {
+function event_manage_add_event_form_submit_1($form, &$form_state) {
+  dd("add event");
   $node = $form_state['event_node'];
   field_attach_submit('node',$node,$form, $form_state);
   $node->body[LANGUAGE_NONE][0]['value'] = $form_state['values']['body'];
@@ -277,6 +289,7 @@ function event_manage_add_event_form_submit($form, &$form_state) {
  * Callback function for viewing the events.
  */ 
 function view_events_callback($args) {
+  $GLOBALS['em_banner'] = true;
   //Adding the events js helper.
   $events_helper_js_path = drupal_get_path("module", "events_manage") . "/js/events_helper.js";
   drupal_add_js($events_helper_js_path);

@@ -34,8 +34,10 @@
   
 
 </header>
-<div class="em_banner
-"></div>
+<? if(isset($GLOBALS['em_banner'])) {?>
+  <div class="em_banner
+  "></div>
+<?}?>
 <div class="main-container container">
 
   <header role="banner" id="page-header">
