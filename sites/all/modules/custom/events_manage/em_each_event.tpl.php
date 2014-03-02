@@ -3,6 +3,9 @@
  * $event - Event object.
  * $is_manage - Whether the event can be managed or not.
  */
+  dd("event");
+  $event_load = node_load($event->nid);
+  $profile_image_url = file_create_url($event_load -> field_em_event_image[LANGUAGE_NONE][0]['uri']);
 ?>
 <? echo theme("event_edit_modal", array("event" => $event)); ?>
 <li id="event_container_<?echo $event->nid;?>" class="event_container">
@@ -11,7 +14,7 @@
     <a class="delete_event" id="delete_event_<?echo $event->nid; ?>"><i style="float:right;" class="fa fa-times"></i></a><a id="edit_event_<? echo $event->nid ?>" class="edit_event"  style="color:black;"><i style="float:right;margin-right:10px;" class="fa fa-pencil"></i></a>
   <?}?>
   <div>
-   <div class="event_time">10 <span>AM</span><div style="background-image:url('/sites/default/files/ruby_0.jpg');background-size:100% 100%;width:80px; height:80px; margin-top:5px;"></div></div>
+   <div class="event_time">10 <span>AM</span><div style="background-image:url(<? echo $profile_image_url;?>);background-size:100% 100%;width:80px; height:80px; margin-top:5px;"></div></div>
    <div class="event_inner_container">
     <span class="event_place"><?echo $event->field_place_value?></span>
     <span class="event_title"><?echo $event->title?></span>

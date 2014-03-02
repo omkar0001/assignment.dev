@@ -23,13 +23,15 @@ jQuery(document).ready(function() {
   });
 
   //When user click on save event in modal.
-  jQuery("#save-event").on('click',function() {
-    jQuery("#edit-submit").trigger("click");
+  jQuery(".modal-footer .btn.btn-primary").on('click',function() {
+    console.log("saving event");
+    jQuery(jQuery(this).parent().prev().find("[id*='edit-submit']")[0]).trigger("click");
+    //jQuery("#edit-submit").trigger("click");
   });
   
   jQuery("#event-manage-add-event-form").submit(function(){
     
-    alert("save event triggered");
+    
   });
 
   jQuery("#add_event_button").on('click',function() {
