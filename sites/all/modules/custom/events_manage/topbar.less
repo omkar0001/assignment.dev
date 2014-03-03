@@ -1,12 +1,16 @@
 #navbar.navbar .nav {
   margin-left:330px;
   border-bottom:0px;
-  .active a{
+  li.active a{
     background-color:transparent;
     border:0px solid;
     -webkit-box-shadow:inset 0 0px 0px rgba(0,0,0,0.125);
     box-shadow:inset 0 0px 0px rgba(0,0,0,0.125);
     border-bottom: solid 3px #53cae0;
+  }
+  li a {
+    font-weight:bold;
+    margin-top:5px;
   }
 }
 #navbar.navbar #em_signup.nav {
@@ -29,4 +33,16 @@
   background-size:100% 100%;
   margin-bottom:20px;
 
+}
+
+header#navbar {
+  padding-left:20px;
+}
+
+.em_logo {
+  background-image:url("/sites/default/files/event.png");
+  background-size:100% 100%;
+  width:50px;
+  height:50px;
+  float:left;
 }

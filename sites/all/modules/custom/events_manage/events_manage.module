@@ -201,6 +201,9 @@ function theme_event_manage_add_event_form($variables) {
  */
 function manage_events_callback() {
   $GLOBALS['em_banner'] = true;
+  //Adding the events filter js path.
+  $events_filter_js_path = drupal_get_path("module", "events_manage") . "/js/em_events_filter.js";
+  drupal_add_js($events_filter_js_path);
   //Adding the events js helper.
   $events_helper_js_path = drupal_get_path("module", "events_manage") . "/js/events_helper.js";
   drupal_add_js($events_helper_js_path);
@@ -290,6 +293,9 @@ function event_manage_add_event_form_submit_1($form, &$form_state) {
  */ 
 function view_events_callback($args) {
   $GLOBALS['em_banner'] = true;
+  //Adding the events filter js path.
+  $events_filter_js_path = drupal_get_path("module", "events_manage") . "/js/em_events_filter.js";
+  drupal_add_js($events_filter_js_path);
   //Adding the events js helper.
   $events_helper_js_path = drupal_get_path("module", "events_manage") . "/js/events_helper.js";
   drupal_add_js($events_helper_js_path);

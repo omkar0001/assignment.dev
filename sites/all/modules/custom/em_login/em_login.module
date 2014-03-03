@@ -254,6 +254,7 @@ function em_login_block_view($delta='') {
  * Login page menu callback.
  */
 function em_login_page_callback($args) {
+  $GLOBALS['em_secondary_tabs_not'] = true;
   $login_css_path = drupal_get_path('module','em_login') . "/css/em_login.css";
   drupal_add_css($login_css_path);
   $form = drupal_get_form("user_login");
@@ -268,6 +269,7 @@ function em_login_page_callback($args) {
  * Register page menu callback.
  */
 function em_register_page_callback($args) {
+  $GLOBALS['em_secondary_tabs_not'] = true;
   $register_css_path = drupal_get_path('module','em_login') . "/css/em_register.css";
   drupal_add_css($register_css_path);
   $form = drupal_get_form("user_register_form");

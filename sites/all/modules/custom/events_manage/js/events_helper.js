@@ -17,8 +17,7 @@ em_show_events = function(view_type, event_container_id) {
          switch(view_type) {
            case "calendar":
              initiate_calendar(events_data);
-           break;
-             
+           break;  
          } 
        }
   });
