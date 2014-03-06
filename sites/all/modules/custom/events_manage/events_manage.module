@@ -9,6 +9,13 @@ function events_manage_menu() {
     'page callback' => 'view_events_callback',
     'access callback' => true);
 
+  $items['em_event/frontpage'] = array(
+    'title' => 'Front Page',
+    'description' => '',
+    'page callback' => 'em_frontpage_callback',
+    'access callback' => true
+  );
+
   $items['event/events_data'] = array(
     'title' => 'Events Data',
     'type' => MENU_CALLBACK,
@@ -47,6 +54,83 @@ function events_manage_menu() {
   );
   return $items;
 }
+
+
+function login_modal() {
+/*
+
+  <div class="modal fade" id="addEventModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="addEventModalLabel">Add Event</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <?
+            $node = new stdclass();
+            $node->type = 'event';
+            node_save($node);
+            $form_state = array();
+            $form_state['event_node'] = $node;
+            echo render(drupal_build_form('event_manage_add_event_form',$form_state, 'modal'));
+          ?>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="save-event" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+*/
+}
+
+/**
+ * Frontpage callback.
+ */
+function em_frontpage_callback($args) {
+  
+  $login_form = drupal_get_form("user_login");
+  $output = theme('em_form_modal', array('modal_id' => 'em_user_login_modal', 'form_rendered' => drupal_render($login_form)));
+
+
+
+  $register_form = drupal_get_form("user_register_form");
+  $output .= theme('em_form_modal', array('modal_id' => 'em_user_register_modal', 'form_rendered' => drupal_render($register_form)));
+  
+
+  $GLOBALS['em_secondary_tabs_not'] = true;
+  $GLOBALS['em_banner'] = true;
+  //Adding the front page js file
+  $em_frontpage_js_path = drupal_get_path("module", "events_manage") . "/js/em_frontpage.js";
+  drupal_add_js($em_frontpage_js_path);
+  //Adding the events filter js path.
+  $events_filter_js_path = drupal_get_path("module", "events_manage") . "/js/em_events_filter.js";
+  drupal_add_js($events_filter_js_path);
+  //Adding the events js helper.
+  $events_helper_js_path = drupal_get_path("module", "events_manage") . "/js/events_helper.js";
+  drupal_add_js($events_helper_js_path);
+
+  //Adding the fullcalendar library.
+  drupal_add_library('em_libraries', 'fullcalendar');
+  //Adding the common calendar to the js path
+  $common_calendar_js_path = drupal_get_path("module", "events_manage") . "/js/em_common_calendar.js";
+  drupal_add_js($common_calendar_js_path);
+  //Adding the common events js
+  $common_events_js_path = drupal_get_path("module", "events_manage") . "/js/common_events.js";
+  drupal_add_js($common_events_js_path);
+  
+  $em_frontpage_css_path = drupal_get_path("module", "events_manage") . "/em_frontpage.css";
+  drupal_add_css($em_frontpage_css_path);
+
+  $events = get_events();
+  return $output . "" . theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'tile'));
+}
+
 
 /**
  * Events data callback.
@@ -172,6 +256,15 @@ function events_manage_theme() {
                  'event_manage_add_event_form'=>array(
                    'render element' => 'form'
                   ),
+                 'em_each_event_tile' => array(
+                    'render element' => 'elements',
+                    'template' => 'em_each_event_tile'
+                  ),
+                  'em_form_modal' => array(
+                    'render_elements' => 'elements',
+                    'template' => "em_form_modal",
+                    "variables" => array("modal_id" => "", "form_rendered" => "")
+                  )
 
 
               );
@@ -272,7 +365,7 @@ function event_manage_add_event_form($form, &$form_state, $context) {
 }
 
 function event_manage_add_event_form_validate($form, &$form_state) {
-  dd('form validating');
+  
 }
 
 /**
@@ -292,25 +385,29 @@ function event_manage_add_event_form_submit_1($form, &$form_state) {
  * Callback function for viewing the events.
  */ 
 function view_events_callback($args) {
-  $GLOBALS['em_banner'] = true;
-  //Adding the events filter js path.
-  $events_filter_js_path = drupal_get_path("module", "events_manage") . "/js/em_events_filter.js";
-  drupal_add_js($events_filter_js_path);
-  //Adding the events js helper.
-  $events_helper_js_path = drupal_get_path("module", "events_manage") . "/js/events_helper.js";
-  drupal_add_js($events_helper_js_path);
+  //if(user_is_logged_in()) {
+    $GLOBALS['em_banner'] = true;
+    //Adding the events filter js path.
+    $events_filter_js_path = drupal_get_path("module", "events_manage") . "/js/em_events_filter.js";
+    drupal_add_js($events_filter_js_path);
+    //Adding the events js helper.
+    $events_helper_js_path = drupal_get_path("module", "events_manage") . "/js/events_helper.js";
+    drupal_add_js($events_helper_js_path);
 
-  //Adding the fullcalendar library.
-  drupal_add_library('em_libraries', 'fullcalendar');
-	//Adding the common calendar to the js path
-  $common_calendar_js_path = drupal_get_path("module", "events_manage") . "/js/em_common_calendar.js";
-  drupal_add_js($common_calendar_js_path);
-  //Adding the common events js
-  $common_events_js_path = drupal_get_path("module", "events_manage") . "/js/common_events.js";
-  drupal_add_js($common_events_js_path);
+    //Adding the fullcalendar library.
+    drupal_add_library('em_libraries', 'fullcalendar');
+	  //Adding the common calendar to the js path
+    $common_calendar_js_path = drupal_get_path("module", "events_manage") . "/js/em_common_calendar.js";
+    drupal_add_js($common_calendar_js_path);
+    //Adding the common events js
+    $common_events_js_path = drupal_get_path("module", "events_manage") . "/js/common_events.js";
+    drupal_add_js($common_events_js_path);
   
-  $events = get_events();
-  return theme('em_events', array('events' => $events, 'is_manage' => false));
+    $events = get_events();
+    return theme('em_events', array('events' => $events, 'is_manage' => false));
+  //} else {
+    
+  //}
 }
 
 /**

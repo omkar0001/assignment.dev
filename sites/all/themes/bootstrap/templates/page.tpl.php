@@ -28,21 +28,16 @@
       -->
     </ul>
 
-    <ul id="em_signup" class="nav nav-tabs">
-      <?if($logged_in) {?>
-        <li><a href="/user/logout" class="em_highlight_text" id="em_signup_button">Logout</a></li>
-      <?} else {?>
-        <li><a href="/user/login" class="em_highlight_text" id="em_signup_button">Sign In</a></li>
-      <?}?>
-    </ul>
+    
+    
   
 
 </header>
 <? if(isset($GLOBALS['em_banner'])) {?>
   <div class="em_banner
-  "></div>
+  "><button class="em_login_register em_login">Login</button><button class="em_login_register em_register">Signup</button></div>
 <?}?>
-<div class="main-container container">
+<div class="main-container fluid-container">
 
   <header role="banner" id="page-header">
     <?php if (!empty($site_slogan)): ?>
@@ -54,13 +49,20 @@
 
   <div class="row-fluid">
 
-    <?php if (!empty($page['sidebar_first'])): ?>
-      <aside class="span3" role="complementary">
-        <?php print render($page['sidebar_first']); ?>
-      </aside>  <!-- /#sidebar-first -->
+    <?php 
+    
+    if (!empty($page['sidebar_first'])): ?>
+      <? if(user_is_logged_in()) {?>
+        <aside class="span3" role="complementary">
+          <?php print render($page['sidebar_first']); ?>
+       </aside>  <!-- /#sidebar-first -->
+      <?}?>
     <?php endif; ?>  
 
-    <section class="<?php print _bootstrap_content_span($columns); ?>">  
+    <section class="<?php 
+      //print _bootstrap_content_span($columns); 
+      print "span12";
+    ?>">  
       <?php if (!empty($page['highlighted'])): ?>
         <div class="highlighted hero-unit"><?php print render($page['highlighted']); ?></div>
       <?php endif; ?>

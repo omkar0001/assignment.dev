@@ -39,16 +39,29 @@
   </div>
 </div>
 
-<div id="view_type_events">
-  <i class="em_calendar_view fa fa-calendar fa-2x"></i>
-  <i class="em_list_view fa-em-active fa fa-bars fa-2x"></i>  
-</div>
+
 <div id="em_calendar_view_container"> </div>
-<ul id="events_container">
- <?foreach($events as $each_event){?>
-   <?echo theme("em_each_event", array("event" => $each_event,'is_manage' => $is_manage))?>
- <?}?>
 
 
+<?if($view_type == "list") {?>
 
-</ul>
+  <div class="container-fluid" id="events_container">
+   <?foreach($events as $each_event){?>
+    <?echo theme("em_each_event", array("event" => $each_event,'is_manage' => $is_manage))?>
+   <?}?>
+  </div>
+<? } else if($view_type == "tile") {?>
+  <div class="container-fluid" id="events_container">
+    <?
+    $i = 0;
+    foreach($events as $each_event){?>
+      <?if($i%2==0){?>
+        <div class="em_event_row container-fluid"><?echo theme("em_each_event_tile", array("event" => $each_event,'is_manage' => $is_manage))?>
+      <?} else {?>
+         <?echo theme("em_each_event_tile", array("event" => $each_event,'is_manage' => $is_manage))?></div>
+      <?}?>   
+    <?
+    $i++;
+    }?>
+  </div>
+<?}?> 
