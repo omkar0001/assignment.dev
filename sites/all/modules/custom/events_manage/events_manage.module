@@ -23,6 +23,13 @@ function events_manage_menu() {
     'page callback' => 'events_data_callback',
     'access callback' => true);
 
+  $items['event/list_events_html'] = array(
+    'title' => 'Events Data',
+    'type' => MENU_CALLBACK,
+    'description' => '',
+    'page callback' => 'list_events_html_callback',
+    'access callback' => true);
+
   $items['event/manage'] = array(
     'title' => 'Manage Events',
     'description' => '',
@@ -52,9 +59,20 @@ function events_manage_menu() {
     'access callback' => true,
 
   );
+
   return $items;
 }
 
+
+function list_events_html_callback($args) {
+  if(isset($_REQUEST['start_date'])) {
+    $events = get_events($_REQUEST['start_date'], $_REQUEST['end_date']);
+
+    $output = "" . theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'only_list'));
+    $output_array = array('list_events_html' => $output);
+    echo json_encode($output_array);
+  }
+}
 
 function login_modal() {
 /*
@@ -136,8 +154,14 @@ function em_frontpage_callback($args) {
  * Events data callback.
  */
 function events_data_callback($args) {
-  $events = get_events();
+  $events = array();
   $events_ids = array();
+  
+  if(isset($_REQUEST['start_date'])) {
+    $events = get_events($_REQUEST['start_date'], $_REQUEST['end_date']);
+  } else {
+    $events = get_events();
+  }
   //Getting the events ids.
   foreach($events as $each_event) {
     $events_ids[] = $each_event->nid;
@@ -404,7 +428,7 @@ function view_events_callback($args) {
     drupal_add_js($common_events_js_path);
   
     $events = get_events();
-    return theme('em_events', array('events' => $events, 'is_manage' => false));
+    return theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'list'));
   //} else {
     
   //}
@@ -413,7 +437,7 @@ function view_events_callback($args) {
 /**
  * Helper function for listing the events.
  */
-function get_events() {
+function get_events($start_date = -1, $end_date = -1) {
   $query = db_select('node','n1');
   $query -> join('field_revision_field_date', 'fd',
     "fd.entity_id = n1.nid && fd.entity_type='node'");
@@ -425,6 +449,11 @@ function get_events() {
   //Getting the body
   $query -> join('field_data_body', 'fb',
     "fb.entity_id = n1.nid && fb.entity_type='node'");
+  if($start_date != -1) {
+    $query -> condition("fd.field_date_value",$start_date,'>');
+    $query -> condition("fd.field_date_value", $end_date, '<');
+  }
+
   $query -> fields("n1",array('nid'));
   $query -> fields('fd',array('field_date_value'));
   $query -> fields('fp', array('field_place_value'));

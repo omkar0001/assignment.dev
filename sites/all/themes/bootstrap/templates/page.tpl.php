@@ -35,7 +35,11 @@
 </header>
 <? if(isset($GLOBALS['em_banner'])) {?>
   <div class="em_banner
-  "><button class="em_login_register em_login">Login</button><button class="em_login_register em_register">Signup</button></div>
+  ">
+   <?if(!user_is_logged_in()) {?>
+     <button class="em_login_register em_login">Login</button><button class="em_login_register em_register">Signup</button>
+   <?}?>
+  </div>
 <?}?>
 <div class="main-container fluid-container">
 
@@ -52,11 +56,13 @@
     <?php 
     
     if (!empty($page['sidebar_first'])): ?>
-      <? if(user_is_logged_in()) {?>
+      <? //if(0) {?>
+      <!-- 
         <aside class="span3" role="complementary">
-          <?php print render($page['sidebar_first']); ?>
+          <?php //print render($page['sidebar_first']); ?>
        </aside>  <!-- /#sidebar-first -->
-      <?}?>
+     
+      <?//}?>
     <?php endif; ?>  
 
     <section class="<?php 

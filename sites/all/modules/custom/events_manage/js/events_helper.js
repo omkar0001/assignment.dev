@@ -8,6 +8,7 @@ em_show_events = function(view_type, event_container_id) {
        dataType: "json",
        async:true,
        success:function(data) {
+         console.log("data data");
          console.log(data);
          events_data = [];
          for(var i=0; i<data.length; i++) {
@@ -17,8 +18,26 @@ em_show_events = function(view_type, event_container_id) {
          switch(view_type) {
            case "calendar":
              initiate_calendar(events_data);
+
            break;  
          } 
        }
   });
 };
+
+var em_display_event_list_view = function(start_date_seconds,end_date_seconds) {
+  jQuery.ajax({
+       url: "/event/list_events_html",
+       dataType: "json",
+       type:'POST',
+       data:{start_date:start_date_seconds, end_date:end_date_seconds},
+       async:true,
+       success:function(data) {
+         console.log("data data");
+         console.log(data);
+         var list_view_html = data['list_events_html'];
+         jQuery("#events_container").replaceWith(list_view_html);
+       }
+  });
+};
+

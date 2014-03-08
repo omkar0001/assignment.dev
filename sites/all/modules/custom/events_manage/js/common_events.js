@@ -1,6 +1,7 @@
 jQuery(document).ready(function(){
-  initiate_calendar();
-  jQuery("#em_calendar_view_container").hide();
+  em_show_events("calendar", "em_calendar_view_container");
+  //initiate_calendar();
+  //jQuery("#em_calendar_view_container").hide();
   //Showing the list view
   jQuery(".em_list_view").on('click', function(){
     jQuery(".fa-em-active").removeClass("fa-em-active");
