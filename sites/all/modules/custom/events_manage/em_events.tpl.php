@@ -17,27 +17,7 @@
 
 
 <?if($view_type == "list") {?>
-<div class="container-fluid">
-  <div class="span6" id="em_calendar_view_container"> </div>
-
-  <div class="container-fluid span5" id="events_container">
-   <?foreach($events as $each_event){?>
-    <?echo theme("em_each_event", array("event" => $each_event,'is_manage' => $is_manage))?>
-   <?}?>
-  </div>
- </div> 
-<? }  else if($view_type == "only_list") {?>
-  
-  <div class="container-fluid span5" id="events_container">
-   <?foreach($events as $each_event){?>
-    <?echo theme("em_each_event", array("event" => $each_event,'is_manage' => $is_manage))?>
-   <?}?>
-  </div>
-
-<?} else if($view_type == "tile") {?>
-  <div class="container-fluid" id="events_container">
-    
-   <div class="modal fade" id="addEventModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="addEventModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -64,6 +44,41 @@
     </div>
    </div>
   </div>
+
+<div class="container-fluid">
+  <div class="span6" id="em_calendar_view_container"> </div>
+  
+  <div class="container-fluid span6" id="events_outer_container">
+    <?
+    global $user;
+    if(is_em_admin($user)) {?>
+      <div id='add_event'><a class='em_btn add_event' id='add_event_button' style=''>Add Event</a></div>
+    <?}?>
+    <div class="container-fluid span12" id="events_container">
+     <?if(count($events) == 0) {
+        echo "<span>No Events in the Month</span>";
+      }?>
+     <?foreach($events as $each_event){?>
+      <?echo theme("em_each_event", array("event" => $each_event,'is_manage' => $is_manage))?>
+     <?}?>
+    </div>
+  </div>
+</div> 
+<? }  else if($view_type == "only_list") {?>
+   <div class="container-fluid span12" id="events_container">
+   <?if(count($events) == 0) {
+        echo "<span class='empty_events'>No Events in the selected Month</span>";
+   }?>
+   <?foreach($events as $each_event){?>
+    
+    <?echo theme("em_each_event", array("event" => $each_event,'is_manage' => $is_manage))?>
+   <?}?>
+  </div>
+
+<?} else if($view_type == "tile") {?>
+  <div class="container-fluid" id="events_container">
+    
+   
 
     <?
     $i = 0;

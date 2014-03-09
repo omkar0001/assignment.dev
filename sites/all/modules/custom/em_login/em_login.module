@@ -81,6 +81,17 @@ function em_login_user_presave(&$edit, $account, $category) {
   //user_save($account, $edit, 'account');
 }
 
+/**
+ * Checks whether the user has admin role or not.
+ */
+function is_em_admin($user = null) {
+  
+
+  if(in_array('administrators', $user->roles) || $user->uid == 1) {
+    return true;
+  }
+  return false;
+}
 
 /**
  * Access callback.

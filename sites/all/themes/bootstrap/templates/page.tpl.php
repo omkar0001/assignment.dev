@@ -3,7 +3,7 @@
 ?>
 <header id="navbar" role="banner" class="navbar navbar-fixed-top">
   <a href="/" class="em_logo"></a>
-  <ul class="nav nav-tabs">
+  <ul style="display:none;" class="nav nav-tabs">
       
       <?if(!isset($GLOBALS['em_secondary_tabs_not'])) {?>
         <?foreach($main_menu as $each_menu) {?>
@@ -27,19 +27,33 @@
       </li> 
       -->
     </ul>
-
-    
+    <?if(user_is_logged_in()){?>
+      <ul id="em_logout"  class="nav nav-tabs">
+       <li><a class="em_logout" href="/user/logout">Logout</a></li>
+      <ul>
+    <?}?>    
     
   
 
 </header>
 <? if(isset($GLOBALS['em_banner'])) {?>
-  <div class="em_banner
-  ">
-   <?if(!user_is_logged_in()) {?>
-     <button class="em_login_register em_login">Login</button><button class="em_login_register em_register">Signup</button>
-   <?}?>
-  </div>
+  <?if(user_is_logged_in()) {?>
+    <div class="em_secondary_tabs"> 
+      <ul>
+        <li>
+          <a>Home</a>
+          <a>Profile</a>
+          <a class='active'>Events</a>
+        </li>
+      </ul>
+    </div>
+  <?} else {?>
+    <div class="em_banner">
+     <?if(!user_is_logged_in()) {?>
+      <button class="em_login_register em_login">Login</button><button class="em_login_register em_register">Signup</button>
+     <?}?>
+    </div>
+  <?}?>  
 <?}?>
 <div class="main-container fluid-container">
 
@@ -51,7 +65,13 @@
     <?php print render($page['header']); ?>
   </header> <!-- /#header -->
 
-  <div class="row-fluid">
+    
+  </div>
+  <?if(user_is_logged_in()) {?>
+    <div class="row-fluid push-down">
+  <?} else {?>
+    <div class="row-fluid">
+  <?}?>
 
     <?php 
     
@@ -103,6 +123,6 @@
 
   </div>
 </div>
-<footer class="footer container">
+<footer style="background-color:black;" class="footer container-fluid">
   <?php print render($page['footer']); ?>
 </footer>

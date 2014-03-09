@@ -65,10 +65,14 @@ function events_manage_menu() {
 
 
 function list_events_html_callback($args) {
+  global $user;
   if(isset($_REQUEST['start_date'])) {
     $events = get_events($_REQUEST['start_date'], $_REQUEST['end_date']);
-
-    $output = "" . theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'only_list'));
+    if(!is_em_admin($user)) {
+      $output = "" . theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'only_list'));
+    } else {
+      $output = "" . theme('em_events', array('events' => $events, 'is_manage' => true, 'view_type' => 'only_list'));
+    } 
     $output_array = array('list_events_html' => $output);
     echo json_encode($output_array);
   }
@@ -187,6 +191,10 @@ function events_data_callback($args) {
 function events_manage_block_info() {
   $blocks['events_manage_filter_block'] = array('info' => t('Events filter sidebar block.'),
                                       'cache' => DRUPAL_NO_CACHE, );
+  $blocks['em_footer_block'] = array('info' => t("Em custom footer block"),
+    'cache' => DRUPAL_NO_CACHE
+
+  );
   return $blocks;
 }
 
@@ -216,7 +224,16 @@ function events_manage_block_view($delta='') {
 
     $block['content'] = array('#markup' => $output);
     return $block;
+  } else if($delta == 'em_footer_block') {
+    $output = "<ul id='em_footer_block_list' class='nav nav-list'>";
+    $output .= "<li><a>About Us</a></li>";
+    $output .= "<li><a>Contact Us</a></li>";
+    $output .= "<li><a>Partners</a></li>";
+    $output .= "</ul>";
+    $block['content'] = array("#markup" => $output);
+    return $block;
   }
+
 }
 
 /**
@@ -313,43 +330,6 @@ function theme_event_manage_add_event_form($variables) {
   return $output;  
 }
 
-/**
- * Callback for manage events.
- */
-function manage_events_callback() {
-  $GLOBALS['em_banner'] = true;
-  //Adding the events filter js path.
-  $events_filter_js_path = drupal_get_path("module", "events_manage") . "/js/em_events_filter.js";
-  drupal_add_js($events_filter_js_path);
-  //Adding the events js helper.
-  $events_helper_js_path = drupal_get_path("module", "events_manage") . "/js/events_helper.js";
-  drupal_add_js($events_helper_js_path);
-  //Adding the fullcalendar library.
-  drupal_add_library('em_libraries', 'fullcalendar');
-  //Adding the common calendar to the js path
-  $common_calendar_js_path = drupal_get_path("module", "events_manage") . "/js/em_common_calendar.js";
-  drupal_add_js($common_calendar_js_path);
-
-  //Adding events manage js path.
-  $events_js_path = drupal_get_path('module', 'events_manage') . "/js/events_manage.js";
-  drupal_add_js($events_js_path);
-  //Adding the sidebar css.
-  $add_event_manage_sidebar_css_path = drupal_get_path("module","events_manage") . "/events_manage_sidebar.css";
-  drupal_add_css($add_event_manage_sidebar_css_path);
-  //Adding the add event css path.
-  $add_event_css_path = drupal_get_path('module', 'events_manage') . "/add_event.css";
-  drupal_add_css($add_event_css_path);
-  //Adding the modal events less.
-  $event_modal_css_path = drupal_get_path('module','events_manage') . "/events_modal.css";
-  drupal_add_css($event_modal_css_path);
-  //Added the ajax and form libraries.
-  drupal_add_library("system","drupal.ajax");
-  drupal_add_library("system", "jquery.form");
-  $output = "<div id='add_event'><a class='em_btn add_event' id='add_event_button' style=''>Add Event</a></div>";
-  $events = get_events();
-  $output = $output . "" . theme('em_events', array('events' => $events, 'is_manage' => true));
-  return $output;
-}
 
 /**
  * Add event form.
@@ -409,7 +389,7 @@ function event_manage_add_event_form_submit_1($form, &$form_state) {
  * Callback function for viewing the events.
  */ 
 function view_events_callback($args) {
-  //if(user_is_logged_in()) {
+    global $user;
     $GLOBALS['em_banner'] = true;
     //Adding the events filter js path.
     $events_filter_js_path = drupal_get_path("module", "events_manage") . "/js/em_events_filter.js";
@@ -423,16 +403,75 @@ function view_events_callback($args) {
 	  //Adding the common calendar to the js path
     $common_calendar_js_path = drupal_get_path("module", "events_manage") . "/js/em_common_calendar.js";
     drupal_add_js($common_calendar_js_path);
-    //Adding the common events js
-    $common_events_js_path = drupal_get_path("module", "events_manage") . "/js/common_events.js";
-    drupal_add_js($common_events_js_path);
+    
   
     $events = get_events();
-    return theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'list'));
-  //} else {
-    
-  //}
+    if(!is_em_admin($user)) {
+      //Adding the common events js
+      $common_events_js_path = drupal_get_path("module", "events_manage") . "/js/common_events.js";
+      drupal_add_js($common_events_js_path);
+      return theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'list'));
+    }
+    else {
+      //Adding events manage js path.
+      $events_js_path = drupal_get_path('module', 'events_manage') . "/js/events_manage.js";
+      drupal_add_js($events_js_path);
+      //Adding the sidebar css.
+      drupal_add_css($add_event_manage_sidebar_css_path);
+      //Adding the add event css path.
+      $add_event_css_path = drupal_get_path('module', 'events_manage') . "/add_event.css";
+      drupal_add_css($add_event_css_path);
+      //Adding the modal events less.
+      $event_modal_css_path = drupal_get_path('module','events_manage') . "/events_modal.css";
+      drupal_add_css($event_modal_css_path);
+      //Added the ajax and form libraries.
+      drupal_add_library("system","drupal.ajax");
+      drupal_add_library("system", "jquery.form");
+      return theme('em_events', array('events' => $events, 'is_manage' => true, 'view_type' => 'list', 'is_manage' => true));
+    }
 }
+
+
+/**
+ * Callback for manage events.
+ */
+function manage_events_callback() {
+  $GLOBALS['em_banner'] = true;
+  //Adding the events filter js path.
+  $events_filter_js_path = drupal_get_path("module", "events_manage") . "/js/em_events_filter.js";
+  drupal_add_js($events_filter_js_path);
+  //Adding the events js helper.
+  $events_helper_js_path = drupal_get_path("module", "events_manage") . "/js/events_helper.js";
+  drupal_add_js($events_helper_js_path);
+  //Adding the fullcalendar library.
+  drupal_add_library('em_libraries', 'fullcalendar');
+  //Adding the common calendar to the js path
+  $common_calendar_js_path = drupal_get_path("module", "events_manage") . "/js/em_common_calendar.js";
+  drupal_add_js($common_calendar_js_path);
+
+  //Adding events manage js path.
+  $events_js_path = drupal_get_path('module', 'events_manage') . "/js/events_manage.js";
+  drupal_add_js($events_js_path);
+  //Adding the sidebar css.
+  $add_event_manage_sidebar_css_path = drupal_get_path("module","events_manage") . "/events_manage_sidebar.css";
+  drupal_add_css($add_event_manage_sidebar_css_path);
+  //Adding the add event css path.
+  $add_event_css_path = drupal_get_path('module', 'events_manage') . "/add_event.css";
+  drupal_add_css($add_event_css_path);
+  //Adding the modal events less.
+  $event_modal_css_path = drupal_get_path('module','events_manage') . "/events_modal.css";
+  drupal_add_css($event_modal_css_path);
+  //Added the ajax and form libraries.
+  drupal_add_library("system","drupal.ajax");
+  drupal_add_library("system", "jquery.form");
+  $output = "<div id='add_event'><a class='em_btn add_event' id='add_event_button' style=''>Add Event</a></div>";
+  $events = get_events();
+  $output = $output . "" . theme('em_events', array('events' => $events, 'is_manage' => true));
+  return $output;
+}
+
+
+
 
 /**
  * Helper function for listing the events.

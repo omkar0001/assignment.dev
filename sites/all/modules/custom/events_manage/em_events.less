@@ -1,5 +1,21 @@
 
 
+#em_calendar_view_container {
+  .fc-header .fc-header-title {
+    h2 {
+      font-size:150%;
+    }
+  }
+} 
+
+
+
+.empty_events {
+  font-weight:bold;
+  font-size:200%;
+  color:#777;
+  padding-left:10%;
+}
 
 #view_type_events {
   .em_calendar_view {
@@ -7,6 +23,11 @@
     margin-right:20px;
     color:grey;
     margin-bottom:40px;
+    .fc-header .fc-header-title {
+      h2 {
+        font-size:130%;
+      }
+    }
   }
   .em_list_view {
     color:grey;
@@ -18,7 +39,6 @@ div#events_container {
 .em_btn#add_event_button {
   margin-bottom:30px;
   float:right;
-  margin-left:740px;
   cursor:pointer;
 }
 
@@ -57,11 +77,13 @@ div.event_container {
     color:#aaa;
     font-weight:bold;
     font-size:16px;
+    text-transform:uppercase
   }
   .event_time {
     width:100px;
     height:110px;
     float:left;
+    font-weight:bold;
   }
   .event_inner_container {
     height:140px;

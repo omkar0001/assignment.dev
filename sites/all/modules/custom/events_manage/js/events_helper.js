@@ -37,6 +37,26 @@ var em_display_event_list_view = function(start_date_seconds,end_date_seconds) {
          console.log(data);
          var list_view_html = data['list_events_html'];
          jQuery("#events_container").replaceWith(list_view_html);
+         jQuery("#add_event_button").on('click',function() {
+           console.log('show add event modal')
+           jQuery("#addEventModal").modal("show");
+         });
+         //When user clicks on delete event.
+         jQuery(".delete_event").on("click",function(){
+           var r = confirm("Are you sure, you want to delete event?");
+           if(r==true) {
+             var delete_event_id = jQuery(this).attr('id')
+             var delete_event_id_split = delete_event_id.split("_");
+             delete_event(delete_event_id_split[2]);
+           }
+         });
+
+         jQuery(".edit_event").on('click',function() {
+           var edit_event_id = jQuery(this).attr("id");
+           var edit_event_id_split = edit_event_id.split("_");
+           jQuery("#editEventModal_" + edit_event_id_split[2]).modal("show");
+         });
+
        }
   });
 };

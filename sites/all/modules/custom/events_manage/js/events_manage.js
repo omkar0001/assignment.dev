@@ -1,8 +1,10 @@
 var delete_event;
 jQuery(document).ready(function() {
+  
+  em_show_events("calendar", "em_calendar_view_container");
   //Initiate the calendar.
   //initiate_calendar();
-  jQuery("#em_calendar_view_container").hide();
+  /*
   console.log("Added the events")
   //Showing the list view
   jQuery(".em_list_view").on('click', function(){
@@ -21,7 +23,7 @@ jQuery(document).ready(function() {
     //initiate_calendar();
     em_show_events("calendar", "em_calendar_view_container");
   });
-
+  */
   //When user click on save event in modal.
   jQuery(".modal-footer .btn.btn-primary").on('click',function() {
     console.log("saving event");
@@ -33,7 +35,7 @@ jQuery(document).ready(function() {
     
     
   });
-
+  
   jQuery("#add_event_button").on('click',function() {
     jQuery("#addEventModal").modal("show");
   });
