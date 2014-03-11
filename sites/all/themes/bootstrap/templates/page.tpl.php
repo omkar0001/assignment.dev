@@ -1,5 +1,5 @@
 <? 
-  
+  global $user;
 ?>
 <header id="navbar" role="banner" class="navbar navbar-fixed-top">
   <a href="/" class="em_logo"></a>
@@ -37,14 +37,16 @@
 
 </header>
 <? if(isset($GLOBALS['em_banner'])) {?>
+  
   <?if(user_is_logged_in()) {?>
     <div class="em_secondary_tabs"> 
       <ul>
-        <li>
-          <a>Home</a>
-          <a>Profile</a>
-          <a class='active'>Events</a>
-        </li>
+        <li><a href='/'>Home</a></li>
+        <li><a href=''>Profile</a></li>
+        <li><a href='/event/view' class='active'>Events</a></li>
+        <?if(is_em_admin($user)) {?>
+        <li><a href="/em_user/manage">Manage Users</a></li>
+        <?}?>
       </ul>
     </div>
   <?} else {?>

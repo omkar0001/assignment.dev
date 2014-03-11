@@ -141,6 +141,7 @@ function manage_users_callback($args) {
   drupal_add_js($manage_users_js_path);
   //Adding the sidebar css.
   $em_user_manage_sidebar_css_path = drupal_get_path("module","em_login") . "/css/em_user_manage_sidebar.css";
+  $GLOBALS['em_banner'] = true;
   drupal_add_css($em_user_manage_sidebar_css_path);
   return manage_users_table();	
 } 

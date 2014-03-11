@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * Implements hook_schema_alter().
+ */
+function em_user_event_schema() {
+  $schema['em_user_event']['fields']['euid'] =  array( 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,);
+
+  $schema['em_event_user']['fields']['eid'] =  array( 'not null' => false,
+    'type' => 'int',
+    'default' => NULL,
+    'description' => 'event id');
+  $schema['em_user_event']['fields']['uid'] =  array( 'not null' => false,
+    'type' => 'int',
+    'default' => NULL,
+    'description' => 'user id');
+
+  $schema['em_user_event']['fields']['status_approved'] =  array( 'not null' => false,
+    'type' => 'int',
+    'default' => 0,
+    'description' => 'Approval status');  
+
+  $schema['em_user_event']['fields']['status'] =  array( 'not null' => false,
+    'type' => 'int',
+    'default' => 0,
+    'description' => 'Status whether the user is going to event or not'); 
+
+  $schema['em_user_event']['primary key'] = array('euid');
+
+  return $schema;
+  
+}

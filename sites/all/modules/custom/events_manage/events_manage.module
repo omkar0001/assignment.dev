@@ -116,14 +116,15 @@ function login_modal() {
  */
 function em_frontpage_callback($args) {
   
-  $login_form = drupal_get_form("user_login");
-  $output = theme('em_form_modal', array('modal_id' => 'em_user_login_modal', 'form_rendered' => drupal_render($login_form)));
+  if(!user_is_logged_in()) {
+    $login_form = drupal_get_form("user_login");
+    $output = theme('em_form_modal', array('modal_id' => 'em_user_login_modal', 'form_rendered' => drupal_render($login_form)));
 
 
 
-  $register_form = drupal_get_form("user_register_form");
-  $output .= theme('em_form_modal', array('modal_id' => 'em_user_register_modal', 'form_rendered' => drupal_render($register_form)));
-  
+    $register_form = drupal_get_form("user_register_form");
+    $output .= theme('em_form_modal', array('modal_id' => 'em_user_register_modal', 'form_rendered' => drupal_render($register_form)));
+  }
 
   $GLOBALS['em_secondary_tabs_not'] = true;
   $GLOBALS['em_banner'] = true;
@@ -148,9 +149,10 @@ function em_frontpage_callback($args) {
   
   $em_frontpage_css_path = drupal_get_path("module", "events_manage") . "/em_frontpage.css";
   drupal_add_css($em_frontpage_css_path);
-
-  $events = get_events();
-  return $output . "" . theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'tile'));
+  
+  $events = get_events(-1, -1, 0, 4);
+  
+  return $output . "" . theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'tile')) . "<a class='em_event_view_more' href='/event/view'>View More &rarr;</a>";
 }
 
 
@@ -390,7 +392,24 @@ function event_manage_add_event_form_submit_1($form, &$form_state) {
  */ 
 function view_events_callback($args) {
     global $user;
+    $output = "";
     $GLOBALS['em_banner'] = true;
+    //Adding the frontpage css file if not registered.
+    if(!user_is_logged_in()) {
+      //Adding the frontpage css path.
+      $em_frontpage_css_path = drupal_get_path('module', 'events_manage') . "/em_frontpage.css";
+      drupal_add_css($em_frontpage_css_path);
+      //Adding the frontpage js path
+      $em_frontpage_js_path = drupal_get_path("module", "events_manage") . "/js/em_frontpage.js";
+      drupal_add_js($em_frontpage_js_path);
+
+      $login_form = drupal_get_form("user_login");
+      $output .= theme('em_form_modal', array('modal_id' => 'em_user_login_modal', 'form_rendered' => drupal_render($login_form)));
+    
+      $register_form = drupal_get_form("user_register_form");
+      $output .= theme('em_form_modal', array('modal_id' => 'em_user_register_modal', 'form_rendered' => drupal_render($register_form)));
+      
+    }
     //Adding the events filter js path.
     $events_filter_js_path = drupal_get_path("module", "events_manage") . "/js/em_events_filter.js";
     drupal_add_js($events_filter_js_path);
@@ -410,7 +429,7 @@ function view_events_callback($args) {
       //Adding the common events js
       $common_events_js_path = drupal_get_path("module", "events_manage") . "/js/common_events.js";
       drupal_add_js($common_events_js_path);
-      return theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'list'));
+      return $output . "" . theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'list'));
     }
     else {
       //Adding events manage js path.
@@ -476,7 +495,7 @@ function manage_events_callback() {
 /**
  * Helper function for listing the events.
  */
-function get_events($start_date = -1, $end_date = -1) {
+function get_events($start_date = -1, $end_date = -1, $page_no=null, $page_size=null) {
   $query = db_select('node','n1');
   $query -> join('field_revision_field_date', 'fd',
     "fd.entity_id = n1.nid && fd.entity_type='node'");
@@ -488,9 +507,14 @@ function get_events($start_date = -1, $end_date = -1) {
   //Getting the body
   $query -> join('field_data_body', 'fb',
     "fb.entity_id = n1.nid && fb.entity_type='node'");
+  
   if($start_date != -1) {
     $query -> condition("fd.field_date_value",$start_date,'>');
     $query -> condition("fd.field_date_value", $end_date, '<');
+  }
+
+  if(isset($page_no)) {
+    $query->range($page_no*$page_size, $page_size);
   }
 
   $query -> fields("n1",array('nid'));

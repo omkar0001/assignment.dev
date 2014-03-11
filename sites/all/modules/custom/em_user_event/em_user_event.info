@@ -1,0 +1,3 @@
+name = RSVP for users
+description = This module provides notification when 
+core = 7.x
