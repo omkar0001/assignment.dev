@@ -46,7 +46,7 @@
   </div>
 
 <div class="container-fluid">
-  <div class="span6" id="em_calendar_view_container"> </div>
+  <div class="span5" id="em_calendar_view_container"> </div>
   
   <div class="container-fluid span6" id="events_outer_container">
     <?

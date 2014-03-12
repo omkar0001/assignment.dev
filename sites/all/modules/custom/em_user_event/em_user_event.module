@@ -1,1 +1,45 @@
 <?php
+/**
+ * Creates the row in user_event
+ * 
+ */
+function em_create_user_event($event_array) {
+  db_insert("em_user_event", array('eid' => $event_array['eid'], 'uid' => $event_array['uid'], 'status' => $event_array['status'], 'status_approved' => $event_array['status_approved']));	
+}
+
+/**
+ * Remove the user from an event by uid and eid.
+ */
+function  em_remove_user_event_by_uid_eid($uid, $eid) {	
+  $event_array = array('status_approved' => 0);
+  em_update_user_event_by_uid_eid($uid, $eid, $event_array);
+}
+
+/**
+ * Remove the user from an event by eventuserid.
+ */
+function em_remove_user_event_by_euid($euid) {
+  $event_array = array('status_approved' => 0);
+  em_update_user_event_by_euid($euid, $event_array);  	
+} 
+
+/**
+ *  Change a particular event by user id and event id
+ */
+function em_update_user_event_by_uid_eid($uid, $eid, $event_array) {
+	db_update("em_user_event")
+	->condition('uid', $uid)
+	->condition("eid", $eid)
+	->fields($event_array);
+}
+
+/**
+ * Change a particular event by eventuserid
+ */
+ function em_update_user_event_by_euid($euid, $event_array) {
+   db_update("em_user_event")
+   ->condition("euid", $euid)
+   ->fields($event_array);
+
+ }
+

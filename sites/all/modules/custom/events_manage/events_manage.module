@@ -9,6 +9,14 @@ function events_manage_menu() {
     'page callback' => 'view_events_callback',
     'access callback' => true);
 
+  $items['event/view/%'] = array(
+    'title' => "Event",
+    'description' => '',
+    'page callback' => 'view_event_callback',
+    'page arguments' => array(2),
+    'access callback' => true
+  );
+
   $items['em_event/frontpage'] = array(
     'title' => 'Front Page',
     'description' => '',
@@ -61,6 +69,16 @@ function events_manage_menu() {
   );
 
   return $items;
+}
+
+
+/**
+ * View for event
+ */
+function view_event_callback($event_id) {
+  $event = node_load($event_id);
+  $output .= theme('em_event_full_view', array('event'=> $event));
+  return $output;
 }
 
 
@@ -307,6 +325,11 @@ function events_manage_theme() {
                     'render_elements' => 'elements',
                     'template' => "em_form_modal",
                     "variables" => array("modal_id" => "", "form_rendered" => "")
+                  ),
+                  'em_event_full_view' => array(
+                    'render_elements' => 'elements',
+                    'template' => 'em_event_full_view',
+                    'variables' => array('event' => ''),
                   )
 
 

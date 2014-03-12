@@ -9,7 +9,7 @@ function em_user_event_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,);
 
-  $schema['em_event_user']['fields']['eid'] =  array( 'not null' => false,
+  $schema['em_user_event']['fields']['eid'] =  array( 'not null' => false,
     'type' => 'int',
     'default' => NULL,
     'description' => 'event id');
@@ -26,9 +26,11 @@ function em_user_event_schema() {
   $schema['em_user_event']['fields']['status'] =  array( 'not null' => false,
     'type' => 'int',
     'default' => 0,
-    'description' => 'Status whether the user is going to event or not'); 
+    'description' => 'Status whether the user is going to event or not');   
 
   $schema['em_user_event']['primary key'] = array('euid');
+
+  
 
   return $schema;
   
