@@ -76,6 +76,11 @@ function events_manage_menu() {
  * View for event
  */
 function view_event_callback($event_id) {
+  $GLOBALS['em_banner'] = true;
+  
+  $em_event_fullview_css_path = drupal_get_path('module','events_manage') . "/em_event_fullview.css";
+  drupal_add_css($em_event_fullview_css_path);
+
   $event = node_load($event_id);
   $output .= theme('em_event_full_view', array('event'=> $event));
   return $output;
