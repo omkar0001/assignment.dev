@@ -48,6 +48,11 @@
         <li><a href="/em_user/manage">Manage Users</a></li>
         <?}?>
       </ul>
+      <?if($_SERVER['REQUEST_URI'] == '/event/view') {?>
+        <? if(is_em_admin($user)) {?>
+         <div id='add_event'><a class='em_btn add_event' id='add_event_button' style=''>Add Event</a></div>
+        <?}?>
+      <?}?>
     </div>
   <?} else {?>
     <div class="em_banner">
@@ -125,6 +130,17 @@
 
   </div>
 </div>
+<!--
 <footer style="background-color:black;" class="footer container-fluid">
-  <?php print render($page['footer']); ?>
+  <?php //print render($page['footer']); ?>
 </footer>
+-->
+<div id="footer">
+  <div class="container">
+    <p class="text-muted credit">
+      <a class="em_aboutus_link">About us</a>
+      <a class="em_contactus_link">Contact us</a>
+      <a class="em_partners_link">Partners</a>
+    </p>
+  </div>
+</div>

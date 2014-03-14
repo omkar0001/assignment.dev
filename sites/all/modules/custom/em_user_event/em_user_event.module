@@ -1,4 +1,29 @@
 <?php
+
+/**
+ * Implements hook_menu().
+ */
+function em_user_event_menu() {
+  $items['em_event_register/%'] = array(
+    'title' => 'Register to an event',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'em_event_register_callback',
+    'page arguments' => array(1),
+    'access callback' => true,
+  );
+  return $items;
+}
+
+/**
+ * Register an event.
+ */
+function em_event_register_callback($event_id) {
+  global $user;
+  $event_array = array('eid' => $event_id, 'uid' => $user->uid, 'status' => 1, 'status_approved' =>1);
+  em_create_user_event($event_array);
+}
+
+
 /**
  * Creates the row in user_event
  * 
