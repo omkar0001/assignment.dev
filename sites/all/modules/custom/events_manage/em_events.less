@@ -1,10 +1,32 @@
 
 
 #em_calendar_view_container {
-  .fc-header .fc-header-title {
-    h2 {
-      font-size:150%;
+  .fc-day-header {
+    border:solid 1px #125890;
+  }
+  .fc-header{  
+    .fc-button {
+      background-image:none;
+      background-color:white;
+      border:solid 1px #125890;
+      border-radius:0px;
     }
+    .fc-button.fc-state-active {
+      border:solid 2px #125890;
+    }
+
+    .fc-header-title {
+    
+      h2 {
+        font-size:150%;
+      }
+    }
+  }
+  table.fc-border-seperate {
+    border-collapse:collapse;
+  }
+  th.fc-day-header {
+    color:#3e433e;
   }
 } 
 
@@ -39,15 +61,16 @@ div#add_event {
   margin-right:9%;
   margin-bottom:10px;
   padding-top:7px;
-  height:49px;
+  height:70px;
   position:fixed;
   top:55px;
-  left:83%;
+  left:88%;
   background-color:white;
   padding-left:10px;
   padding-right:10px;
   .em_btn#add_event_button {
-    padding:11px 10px 11px 10px;
+    padding:12px 30px 12px 30px;
+    background-color:#003775;
   } 
 }
 
@@ -114,7 +137,7 @@ div.event_container {
     }
     .event_title { 
       a {
-        color:#008484;
+        color:#003775;
         text-decoration:none;
       }
       float:left;

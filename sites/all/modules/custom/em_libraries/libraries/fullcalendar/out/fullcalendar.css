@@ -354,7 +354,7 @@ a.fc-event,
 ------------------------------------------------------------*/
 
 table.fc-border-separate {
-	border-collapse: separate;
+	border-collapse: collapse;
 	}
 	
 .fc-border-separate th,
@@ -386,7 +386,7 @@ table.fc-border-separate {
 	text-align: center;
     height:50px;
 	padding-top:10px;
-	border-color:#08c;
+	border-color:#003775;
 	}
 
 .fc .fc-week-number {

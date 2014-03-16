@@ -1,6 +1,7 @@
 <?php
  /**
   * $event - Event Node object.
+  * $is_event_user_registered - Is user registered
   */
   $profile_image_url = file_create_url($event -> field_em_event_image[LANGUAGE_NONE][0]['uri']);
   $event_start_date = $event->field_date[LANGUAGE_NONE][0]['value'];
@@ -10,8 +11,15 @@
   
   <div class='span12 em_event_info_container'>
     <div class="span12 em_event_info">
-      <div class="em_event_title"><?echo $event->title;?><a id="em_register_event_<?echo $event -> nid?>" class="em_register_event_btn">REGISTER</a></div>
-      <div class="em_event_place_time"><?echo $event->field_place_value[LANGUAGE_NONE][0]['value']?>, Saturday</div>
+      
+        <div class="em_event_title"><?echo $event->title;?>
+        <?if($is_event_user_registered) {?>
+          <span class="approval_status">(Waiting for approval)</span>
+        <?}?>
+      <?if(!$is_event_user_registered) {?> 
+        <a id="em_register_event_<?echo $event -> nid?>" class="em_register_event_btn">REGISTER</a></div>
+      <?}?>
+      <div class="em_event_place_time"><?echo $event->field_place[LANGUAGE_NONE][0]['value']?>, <? echo date("l",$event_start_date)?> <?echo date("M", $event_start_date)?>  <? echo date("j",$event_start_date)?></div>
     </div>    
     <div class='em_event_pic span4' style="float:left;background-image:url(<?echo $profile_image_url?>)"></div>
     <div class="span8 em_description">

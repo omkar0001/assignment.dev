@@ -53,7 +53,9 @@ function em_login_theme() {
     'access callback' => true,
     'page arguments' => array(1)
   );
-  
+  $items['em_user_change_role/%'] = array(
+    
+  );
   return $items;
  }
 
@@ -137,6 +139,10 @@ function em_user_deactivate($user) {
  * Manage users page callback.
  */
 function manage_users_callback($args) {
+  //Adding the css path
+  $em_user_manage_css_path = drupal_get_path('module', 'em_login') . '/css/em_user_manage.css';
+  drupal_add_css($em_user_manage_css_path);
+
   $manage_users_js_path = drupal_get_path("module", 'em_login') . "/js/em_user_manage.js";
   drupal_add_js($manage_users_js_path);
   //Adding the sidebar css.
@@ -160,7 +166,7 @@ function manage_users_table() {
  * Call back for usermanage form
  */
  function em_user_manage_form($form, &$form_state) {
-   
+   global $user;
    $header = array(
     'username' => array('data' => t('Username'),),
     'firstname' => array('data' => t('First Name'),),
@@ -194,12 +200,24 @@ function manage_users_table() {
 
    $profiles_accounts = array();
    foreach($profiles as $each_profile) {
-     dd("each profile");
      $profiles_accounts[$each_profile->uid] = $each_profile;   
    }
    foreach($accounts as $account) {
      $firstname = '-';
      $lastname = '-';
+     $actions_string = "";
+     if($account->status == 0) {
+       $actions_string = "<a class='em_user_activate_deactivate em_user_activate' id='user_activate_deactivate_" . $account->uid . "'>Activate</a>";
+     } else {
+
+       $actions_string = "<a class='em_user_activate_deactivate em_user_deactivate' id='user_activate_deactivate_" . $account->uid . "'>Deactivate</a>";
+       if(!is_em_admin($account)) {
+         $actions_string .= " &nbsp;&nbsp;<a class='em_user_admin em_add_admin' id='user_admin_" . $account->uid . "'>AddAdminRole</a>";
+       } else {
+         $actions_string .= " &nbsp;&nbsp;<a class='em_user_admin em_remove_admin' id='user_admin_" . $account -> uid . "'>RemoveAdminRole</a>"; 
+       }
+       
+     }
      if(isset($profiles_accounts[$account->uid])) {
        $profile = $profiles_accounts[$account->uid];
        $firstname = $profile->field_first_name[LANGUAGE_NONE][0]['value'];
@@ -213,10 +231,8 @@ function manage_users_table() {
         'access' =>  $account->access ? t('@time ago', array('@time' => format_interval(REQUEST_TIME - $account->access))) : t('never'),
         'status' => array('data' => array('#type' => 'link', '#title' => t('edit'), '#href' => "user/$account->uid/edit", '#options' => array('query' => $destination))),
        );
-       if($account -> status == 0)
-         $options[$account->uid]['status'] = "<a class='em_user_activate_deactivate em_user_activate' id='user_activate_deactivate_" . $account->uid . "'>Activate</a>";
-       else
-         $options[$account->uid]['status'] = "<a class='em_user_activate_deactivate em_user_deactivate' id='user_activate_deactivate_" . $account->uid . "'>Deactivate</a>";
+       
+       $options[$account->uid]['status'] = $actions_string;
    }
    $form['accounts'] = array(
     '#type' => 'tableselect',

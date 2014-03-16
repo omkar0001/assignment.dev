@@ -135,7 +135,7 @@
   <?php //print render($page['footer']); ?>
 </footer>
 -->
-<div id="footer">
+<div id="footer" style='margin-top:20px;'>
   <div class="container">
     <p class="text-muted credit">
       <a class="em_aboutus_link">About us</a>

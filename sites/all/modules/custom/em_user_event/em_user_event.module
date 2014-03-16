@@ -23,13 +23,45 @@ function em_event_register_callback($event_id) {
   em_create_user_event($event_array);
 }
 
+/**
+ * Checks whether a user is registered to an event or not.
+ */
+function em_is_user_event_registered($uid, $eid) {
+  $em_user_event_query = db_select('em_user_event', 'eue')
+  ->fields('eue', array('status_approved'))
+  ->condition('eid', $eid)
+  ->condition('uid', $uid)
+  ->execute();
+  $is_user_registered = false;
+  foreach($em_user_event_query as $each_em_user_event) {
+    if($each_em_user_event->status_approved != 0) {
+      $is_user_registered = true;
+    }
+  }
+  return $is_user_registered;
+}
+
 
 /**
  * Creates the row in user_event
  * 
  */
 function em_create_user_event($event_array) {
-  db_insert("em_user_event", array('eid' => $event_array['eid'], 'uid' => $event_array['uid'], 'status' => $event_array['status'], 'status_approved' => $event_array['status_approved']));	
+  
+  $no_rows = db_select("em_user_event", "eue")
+  ->fields('eue', array('euid'))
+  ->condition('eid', $event_array['eid'])
+  ->condition('uid', $event_array['uid'])
+  ->execute()
+  ->rowCount();
+
+  if($no_rows == 0) {
+    db_insert("em_user_event")
+    ->fields(array('eid' => $event_array['eid'], 'uid' => $event_array['uid'], 'status' => $event_array['status'], 'status_approved' => $event_array['status_approved']))
+    ->execute();
+  }else {
+    em_update_user_event_by_uid_eid($event_array['uid'], $event_array['eid'], $event_array);
+  }  	
 }
 
 /**
@@ -55,7 +87,8 @@ function em_update_user_event_by_uid_eid($uid, $eid, $event_array) {
 	db_update("em_user_event")
 	->condition('uid', $uid)
 	->condition("eid", $eid)
-	->fields($event_array);
+	->fields($event_array)
+  ->execute();
 }
 
 /**

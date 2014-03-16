@@ -9,8 +9,8 @@
   $event_start_date = $event_load->field_date[LANGUAGE_NONE][0]['value'];
 ?>
 <? echo theme("event_edit_modal", array("event" => $event)); ?>
-<div id="event_container_<?echo $event->nid;?>" class="span12 event_container">
-  <span class="event_date_time"><? echo date("l",$event_start_date)?>, FEB <? echo date("j",$event_start_date)?></span>
+<div id="event_container_<?echo $event->nid;?>" class="span11 event_container">
+  <span class="event_date_time"><? echo date("l",$event_start_date)?>, <?echo date("M", $event_start_date)?>  <? echo date("j",$event_start_date)?></span>
   <? if($is_manage) { ?>
     <a class="delete_event"  id="delete_event_<?echo $event->nid; ?>"><i style="float:right;" class="fa fa-times"></i></a><a id="edit_event_<? echo $event->nid ?>" class="edit_event"  style="color:black;"><i style="float:right;margin-right:10px;" class="fa fa-pencil"></i></a>
   <?}?>

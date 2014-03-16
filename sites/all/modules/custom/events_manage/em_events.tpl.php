@@ -48,7 +48,7 @@
 <div class="container-fluid">
   <div class="span5" id="em_calendar_view_container"> </div>
   
-  <div class="container-fluid span6" id="events_outer_container">
+  <div class="container-fluid span7" id="events_outer_container">
     <?
     global $user;
     if(is_em_admin($user)) {?>
