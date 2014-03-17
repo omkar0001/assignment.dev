@@ -1,5 +1,7 @@
 <? 
   global $user;
+  dd('active secondary tab');
+  dd($active_secondary_tab);
 ?>
 <header id="navbar" role="banner" class="navbar navbar-fixed-top">
   <a href="/" class="em_logo"></a>
@@ -41,11 +43,24 @@
   <?if(user_is_logged_in()) {?>
     <div class="em_secondary_tabs"> 
       <ul>
-        <li><a href='/'>Home</a></li>
+        <?if($active_secondary_tab == 'em_frontpage') {?>
+          <li><a class="active" href='/'>Home</a></li>
+        <?} else {?>
+          <li><a href='/'>Home</a></li>
+        <?}?>
+
         <li><a href=''>Profile</a></li>
-        <li><a href='/event/view' class='active'>Events</a></li>
+        <?if($active_secondary_tab == 'em_event_manage') {?>
+          <li><a href='/event/view' class='active'>Events</a></li>
+        <?} else {?>
+          <li><a href='/event/view'>Events</a></li>
+        <?}?>
         <?if(is_em_admin($user)) {?>
-        <li><a href="/em_user/manage">Manage Users</a></li>
+          <?if($active_secondary_tab == 'em_user_manage') {?>    
+            <li><a href="/em_user/manage" class="active">Manage Users</a></li>
+          <?} else {?>
+            <li><a href="/em_user/manage">Manage Users</a></li>
+          <?}?>
         <?}?>
       </ul>
       <?if($_SERVER['REQUEST_URI'] == '/event/view') {?>

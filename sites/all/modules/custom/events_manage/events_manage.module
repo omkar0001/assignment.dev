@@ -142,6 +142,21 @@ function login_modal() {
 }
 
 /**
+ * Implements hook_preprocess_page()
+ */
+function events_manage_preprocess_page(&$variables) {
+  dd('cool');
+  if($_SERVER['REQUEST_URI'] == '/event/view') {
+    $variables['active_secondary_tab'] = 'em_event_manage';
+  } else if($_SERVER['REQUEST_URI'] == '/em_user/manage') {
+    dd('user manage');
+    $variables['active_secondary_tab'] = 'em_user_manage';
+  } else if(drupal_is_front_page()) {
+    $variables['active_secondary_tab'] = 'em_frontpage';
+  }
+}
+
+/**
  * Frontpage callback.
  */
 function em_frontpage_callback($args) {
