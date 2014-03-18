@@ -74,9 +74,64 @@ a.em_event_view_more {
       font-weight:bold;
     }
   }
-
+  .modal-dialog {
+    width:100%;
+  }
   .modal-body {
-    width:410px;
+
+
+    width:100%;
+  div.control-group.form-item-name.form-item {
+    width:40%;
+    float:left;
+  }
+  div.control-group.form-item-mail.form-item {
+    width:40%;
+    float:left;
+    margin-left:20%;
+  }
+  div.control-group.form-type-password-confirm.form-item-pass.form-item {
+    width:100%;
+    float:left;
+    div.controls {
+      float:left;
+      width:100%;
+      div.control-group.form-type-password.form-item-pass-pass1.password-parent {
+        div.password-strength {
+          display:none;
+          width:0px;
+        }
+        float:left;
+        width:40%;
+        clear:none;
+      }
+
+      div.control-group.form-type-password.form-item-pass-pass2.confirm-parent {
+        div.password-confirm {
+          width:0px;
+        }
+        float:left;
+        width:40%;
+        clear:none;
+        margin-left:20%;
+      }
+      
+      div.password-suggestions.description {
+        display:none!important;
+      }
+
+    }
+  }
+
+    div.field-type-text.field-name-field-first-name {
+      width:40%;
+      float:left;
+    }
+    div.field-type-text.field-name-field-last-name {
+      width:40%;
+      float:left;
+      margin-left:20%;
+    }
     -webkit-border-radius:2px;
     border-radius:2px;
     padding:50px;
@@ -119,8 +174,8 @@ a.em_event_view_more {
   }
 
 
-  left:44%;
-  width:900px;
+  left:50%;
+  width:70%;
   background:transparent;
   overflow:hidden;
   border:0px solid transparent;
