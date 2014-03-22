@@ -53,11 +53,34 @@ function em_login_theme() {
     'access callback' => true,
     'page arguments' => array(1)
   );
-  $items['em_user_change_role/%'] = array(
-    
+  $items['em_user_change_role/%/%'] = array(
+    'title' => 'Change role.',
+    'description' => 'Changing the role of the user.',
+    'page callback' => 'em_user_change_role_callback',
+    'access callback' => true,
+    'page arguments' => array(1,2)   
   );
   return $items;
  }
+
+/**
+ * Add or remove role callback.
+ */
+function em_user_change_role_callback($args) {
+  $args = func_get_args();
+  $uid = $args[0];
+  $user_load = user_load($uid);
+  $action_type = $args[1];
+  switch($action_type) {
+    case 'remove_admin':
+      unset($user_load->roles[4]);
+    break;
+    case 'add_admin':
+      $user_load->roles[4] ="administrators";
+    break;
+  }
+  user_save($user_load);
+}
 
 /**
  * Profile callback.
@@ -139,6 +162,9 @@ function em_user_deactivate($user) {
  * Manage users page callback.
  */
 function manage_users_callback($args) {
+  global $user;
+  dd('roles');
+  dd($user->roles);
   //Adding the css path
   $em_user_manage_css_path = drupal_get_path('module', 'em_login') . '/css/em_user_manage.css';
   drupal_add_css($em_user_manage_css_path);
@@ -169,9 +195,9 @@ function manage_users_table() {
    global $user;
    $header = array(
     'username' => array('data' => t('Username'),),
+    'email' => array('data' => t('Email')),
     'firstname' => array('data' => t('First Name'),),
     'lastname' => array('data' => t('Last Name')),
-    'access' => array('data' => t('Last access'),),
     'status' => array('data' => t('Actions')),
    );
    //Getting the user ids.
@@ -225,9 +251,9 @@ function manage_users_table() {
      }  
        $options[$account->uid] = array(
         'username' => $account->name,
+        'email' => $account -> mail,
         'firstname' => $firstname,
         'lastname' => $lastname,
-        'member_for' => format_interval(REQUEST_TIME - $account->created),
         'access' =>  $account->access ? t('@time ago', array('@time' => format_interval(REQUEST_TIME - $account->access))) : t('never'),
         'status' => array('data' => array('#type' => 'link', '#title' => t('edit'), '#href' => "user/$account->uid/edit", '#options' => array('query' => $destination))),
        );
@@ -236,6 +262,7 @@ function manage_users_table() {
    }
    $form['accounts'] = array(
     '#type' => 'tableselect',
+    '#id' => 'em_user_manage_table',
     '#header' => $header,
     '#options' => $options,
     '#empty' => t('No people available.'),

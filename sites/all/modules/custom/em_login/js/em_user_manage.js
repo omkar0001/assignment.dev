@@ -20,9 +20,16 @@ jQuery(document).ready(function() {
     var user_admin_id_split = user_admin_id.split("_");
     var id = user_admin_id_split[2];
     if(jQuery(this).hasClass("em_add_admin")) {
+      jQuery(this).removeClass("em_add_admin");
+      jQuery(this).addClass("em_remove_admin");
+      jQuery(this).text("RemoveAdminRole");
       em_change_user_role(id, "add_admin");  
     } else {
+      jQuery(this).removeClass("em_remove_admin");
+      jQuery(this).addClass("em_add_admin");
+      jQuery(this).text("AddAdminRole");
       em_change_user_role(id, "remove_admin");
+      
     }
   });
 });
@@ -59,9 +66,33 @@ deactivate_user = function(user_id) {
 
 em_change_user_role = function(uid,role_action) {
   switch(role_action) {
-    case 'add_admin':
-    break;
     case 'remove_admin':
+    jQuery.ajax({
+       url: "/em_user_change_role/" + uid + "/remove_admin",
+       dataType: "html",
+       async:false,
+       success:function(data) {
+         /*
+         jQuery("#user_activate_deactivate_" + user_id).removeClass("em_user_deactivate");
+         jQuery("#user_activate_deactivate_" + user_id).addClass("em_user_activate");
+         jQuery("#user_activate_deactivate_" + user_id).text("Activate");  
+         */
+       }
+    });
+    break;
+    case 'add_admin':
+    jQuery.ajax({
+       url: "/em_user_change_role/" + uid + "/add_admin",
+       dataType: "html",
+       async:false,
+       success:function(data) {
+        /*
+         jQuery("#user_activate_deactivate_" + user_id).removeClass("em_user_deactivate");
+         jQuery("#user_activate_deactivate_" + user_id).addClass("em_user_activate");
+         jQuery("#user_activate_deactivate_" + user_id).text("Activate");  
+         */
+       }
+    });
     break;
   }
 }
