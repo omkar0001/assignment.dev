@@ -92,4 +92,20 @@
     $i++;
     }?>
   </div>
+<?} else if($view_type == "tile_medium"){?>
+    
+    <div class="container-fluid span3" id="events_tile_medium_container">
+    
+   
+
+    <?
+    $i = 0;
+    foreach($events as $each_event){?>
+      
+         <?echo theme("em_event_medium_tile", array("event" => $each_event,'is_manage' => $is_manage))?>
+    
+    <?
+    $i++;
+    }?>
+  </div>
 <?}?> 

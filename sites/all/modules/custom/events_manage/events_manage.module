@@ -87,9 +87,13 @@ function view_event_callback($event_id) {
 
   $em_event_manage_js_path = drupal_get_path("module", 'events_manage') . '/js/em_event_register.js';
   drupal_add_js($em_event_manage_js_path);
+  //$featured_events = "<div class='em_featured_events'>";
+  $events = get_events(-1, -1, 0, 4);
+  //Getting the featured events.
+  $featured_events .= theme('em_events', array('events' => $events, 'is_manage' => false, 'view_type' => 'tile_medium'));
 
   $event = node_load($event_id);
-  $output .= theme('em_event_full_view', array('event'=> $event, 'is_event_user_registered' => $is_event_user_registered));
+  $output .= theme('em_event_full_view', array('event'=> $event, 'is_event_user_registered' => $is_event_user_registered)) . "" . $featured_events;
   return $output;
 }
 
@@ -357,12 +361,19 @@ function events_manage_theme() {
                     'render_elements' => 'elements',
                     'template' => 'em_event_full_view',
                     'variables' => array('event' => ''),
+                  ),
+
+                  'em_event_medium_tile' => array(
+                    'render_elements' => 'elements',
+                    'template' => 'em_event_medium_tile',
+                    'variables' => array('event' => '')
                   )
 
 
               );
 
 }
+
 
 
 /**
