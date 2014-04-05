@@ -1,4 +1,78 @@
+ul#em_filter_events {
+   float:left;
+   display:block;
+   margin-left:55px;
+   li#em_event_all_tab {
+    a {
+      font-size:18px;
+      color:#777;
+    }
+    display:block;
+    float:left;
+    padding:9px 18px 9px 18px;
+    border-left:solid 1px #125890;
+    border-top:solid 1px #125890;
+    border-bottom: solid 1px #125890;
+    border-right: solid 1px #125890;
+  }
+  
+  li#em_event_approval_tab {
+    a {
+      font-size:18px;
+      color:#777;
+    }
+    display:block;
+    float:left;
+    padding:9px 18px 9px 18px;
+    border-right:solid 1px #125890;
+    border-top:solid 1px #125890;
+    border-bottom: solid 1px #125890;
+  }
 
+  li#em_event_attend_tab {
+    a {
+      font-size:18px;
+      color:#777;
+    }
+    display:block;
+    float:left;
+    padding:9px 18px 9px 18px;
+    border-right:solid 1px #125890;
+    border-top:solid 1px #125890;
+    border-bottom: solid 1px #125890;
+  }
+  li#em_event_all_tab.active_event_tab {
+    a {
+      font-size:16px;
+      font-weight:bold;
+    }
+    border-left:solid 2px #125890;
+    border-top:solid 2px #125890;
+    border-bottom: solid 2px #125890;
+    border-right:solid 2px #125890;
+  }
+  li#em_event_approval_tab.active_event_tab {
+    a {
+      font-size:16px;
+      font-weight:bold;
+    }
+    border-left:solid 2px #125890;
+    border-top:solid 2px #125890;
+    border-bottom: solid 2px #125890;
+    border-right:solid 2px #125890;
+  }
+
+  li#em_event_attend_tab.active_event_tab {
+    a {
+      font-size:16px;
+      font-weight:bold;
+    }
+    border-left:solid 2px #125890;
+    border-top:solid 2px #125890;
+    border-bottom: solid 2px #125890;
+    border-right:solid 2px #125890;
+  }
+}
 
 #em_calendar_view_container {
   .fc-day-header {
@@ -36,7 +110,7 @@
   font-weight:bold;
   font-size:200%;
   color:#777;
-  padding-left:10%;
+  padding-left:3%;
 }
 
 #view_type_events {
@@ -80,6 +154,7 @@ div#add_event {
 
 div#events_container {
   float:left;
+  margin-top:10px;
 }
 .em_btn#add_event_button {
   margin-bottom:30px;

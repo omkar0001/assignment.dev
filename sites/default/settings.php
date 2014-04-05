@@ -185,7 +185,7 @@ $databases = array (
     array (
       'database' => 'assignment_dev',
       'username' => 'root',
-      'password' => 'omkarrenuka',
+      'password' => 'omkar',
       'host' => 'localhost',
       'port' => '3306',
       'driver' => 'mysql',

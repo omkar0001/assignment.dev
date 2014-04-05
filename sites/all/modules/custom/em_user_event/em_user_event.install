@@ -17,7 +17,11 @@ function em_user_event_schema() {
     'type' => 'int',
     'default' => NULL,
     'description' => 'user id');
-
+  /**
+   * 0-Not approved
+   * 1- Not approved
+   * 2-Approved
+   */
   $schema['em_user_event']['fields']['status_approved'] =  array( 'not null' => false,
     'type' => 'int',
     'default' => 0,

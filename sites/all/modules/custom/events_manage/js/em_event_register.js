@@ -9,6 +9,7 @@ jQuery(document).ready(function() {
 
   });  	
 });
+ //Registers an particluar event.
  em_register_event = function(event_id) {
  	jQuery.ajax({
        url: "/em_event_register/" + event_id,
@@ -19,4 +20,5 @@ jQuery(document).ready(function() {
          //jQuery("#" + event_container_id).remove(); 
        }
     });
- }
+ };
+

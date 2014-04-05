@@ -1,36 +1,48 @@
+var em_start_date_object=null;
+var em_end_date_object=null;
+var em_event_approved_status=-1;
 var delete_event;
 jQuery(document).ready(function() {
   
   em_show_events("calendar", "em_calendar_view_container");
   //Initiate the calendar.
-  //initiate_calendar();
-  /*
-  console.log("Added the events")
-  //Showing the list view
-  jQuery(".em_list_view").on('click', function(){
-    jQuery(".fa-em-active").removeClass("fa-em-active");
-    jQuery(".em_list_view").addClass("fa-em-active");
-    jQuery("#events_container").show();
-    jQuery("#em_calendar_view_container").hide();
-  });
-
-  //Showing the calendar view.
-  jQuery(".em_calendar_view").on("click", function(){
-    jQuery(".fa-em-active").removeClass("fa-em-active");
-    jQuery(".em_calendar_view").addClass("fa-em-active");
-    jQuery("#events_container").hide();
-    jQuery("#em_calendar_view_container").show();
-    //initiate_calendar();
-    em_show_events("calendar", "em_calendar_view_container");
-  });
-  */
   //When user click on save event in modal.
   jQuery(".modal-footer .btn.btn-primary").on('click',function() {
-    console.log("saving event");
     jQuery(jQuery(this).parent().prev().find("[id*='edit-submit']")[0]).trigger("click");
     //jQuery("#edit-submit").trigger("click");
   });
-  
+  /**
+   * Handles the events when an user clicks on the tabs.
+   */
+  jQuery(".em_event_filter_btn").on("click", function() {
+    var parent_li = jQuery(this).parent();
+    var parent_id = parent_li.attr("id");
+    console.log("parent id");
+    console.log(parent_id);
+    jQuery(".em_event_filter_btn").parent(".active_event_tab").removeClass("active_event_tab");
+    parent_li.addClass("active_event_tab");
+    switch(parent_id){
+      case "active_event_tab":
+      em_event_approved_status = -1;
+      em_calendar_object.fullCalendar("gotoDate",em_start_date_object);
+      //em_show_events("calendar", "em_calendar_view_container", em_start_date_object, em_end_date_object);
+      break;
+      case "em_event_approval_tab":
+      //Waiting for approval.
+      em_event_approved_status = 0;
+      em_calendar_object.fullCalendar("gotoDate", em_start_date_object);
+      //em_show_events("calendar", "em_calendar_view_container", em_start_date_object, em_end_date_object);
+      break;
+      case "em_event_attend_tab":
+      //Events attending.
+      em_event_approved_status = 2;
+      
+      em_calendar_object.fullCalendar("gotoDate", em_start_date_object);
+      //em_show_events("calendar", "em_calendar_view_container", em_start_date_object, em_end_date_object);
+      break;
+    }
+  });
+
   jQuery("#event-manage-add-event-form").submit(function(){
     
     

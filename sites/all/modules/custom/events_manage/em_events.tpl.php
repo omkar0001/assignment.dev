@@ -51,6 +51,13 @@
   <div class="container-fluid span7" id="events_outer_container">
     <?
     global $user;
+    ?>
+    <ul id="em_filter_events">
+      <li class="active_event_tab" id="em_event_all_tab"><a class="em_event_filter_btn">All</a></li>
+      <li  id="em_event_approval_tab"><a class="em_event_filter_btn">Waiting for the approval</a></li>
+      <li  id="em_event_attend_tab"><a class="em_event_filter_btn">I am Attending</a></li>
+    </ul>
+    <?
     if(is_em_admin($user)) {?>
       <div id='add_event'><a class='em_btn add_event' id='add_event_button' style=''>Add Event</a></div>
     <?}?>

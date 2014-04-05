@@ -1,4 +1,8 @@
 <?php
+/**
+ *
+ */
+
 
 /**
  * Implements hook_menu().
@@ -68,7 +72,7 @@ function em_create_user_event($event_array) {
  * Remove the user from an event by uid and eid.
  */
 function  em_remove_user_event_by_uid_eid($uid, $eid) {	
-  $event_array = array('status_approved' => 0);
+  $event_array = array('status_approved' => 1);
   em_update_user_event_by_uid_eid($uid, $eid, $event_array);
 }
 
@@ -76,7 +80,7 @@ function  em_remove_user_event_by_uid_eid($uid, $eid) {
  * Remove the user from an event by eventuserid.
  */
 function em_remove_user_event_by_euid($euid) {
-  $event_array = array('status_approved' => 0);
+  $event_array = array('status_approved' => 1);
   em_update_user_event_by_euid($euid, $event_array);  	
 } 
 

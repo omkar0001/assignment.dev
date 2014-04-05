@@ -1,44 +1,42 @@
-var em_show_events;
+
+
+
 /**
  * Show the events with a particular view on a particular container id
  */
-em_show_events = function(view_type, event_container_id) {
+em_show_events = function(view_type, event_container_id, start_date, end_date) {
   jQuery.ajax({
        url: "/event/events_data",
        dataType: "json",
+       data:{em_event_approved_status:em_event_approved_status, start_date:start_date, end_date:end_date},
        async:true,
        success:function(data) {
-         console.log("data data");
-         console.log(data);
+         /*
          events_data = [];
-         for(var i=0; i<data.length; i++) {
-           var each_event_object = {title:data[i]['title'],start:data[i]['start_date']};
+         for(var i=0; i<data['raw_data'].length; i++) {
+           var each_event_object = {title:data['raw_data'][i]['title'],start:data['raw_data'][i]['start_date']};
            events_data.push(each_event_object);
          }
+         */
          switch(view_type) {
            case "calendar":
-             initiate_calendar(events_data);
-
-           break;  
+             initiate_calendar(data);
+             break;
+            case "list_view":
+              em_display_event_list_view(data);
+         
          } 
        }
   });
 };
 
-var em_display_event_list_view = function(start_date_seconds,end_date_seconds) {
-  jQuery.ajax({
-       url: "/event/list_events_html",
-       dataType: "json",
-       type:'POST',
-       data:{start_date:start_date_seconds, end_date:end_date_seconds},
-       async:true,
-       success:function(data) {
-         console.log("data data");
-         console.log(data);
-         var list_view_html = data['list_events_html'];
+/**
+ * Displays the list of events in list view.
+ */
+var em_display_event_list_view = function(events_data) {
+         var list_view_html = events_data['list_events_html'];
          jQuery("#events_container").replaceWith(list_view_html);
          jQuery("#add_event_button").on('click',function() {
-           console.log('show add event modal')
            jQuery("#addEventModal").modal("show");
          });
          //When user clicks on delete event.
@@ -57,7 +55,6 @@ var em_display_event_list_view = function(start_date_seconds,end_date_seconds) {
            jQuery("#editEventModal_" + edit_event_id_split[2]).modal("show");
          });
 
-       }
-  });
+      
 };
 
